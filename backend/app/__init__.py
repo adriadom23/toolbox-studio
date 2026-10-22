@@ -54,6 +54,7 @@ def create_app() -> Flask:
     from app.api.connections_routes import connections_bp
     from app.api.manifest_routes import manifest_bp
     from app.api.config_routes import config_bp
+    from app.api.browser_routes import browser_bp
 
     app.register_blueprint(health_bp, url_prefix="/api")
     app.register_blueprint(projects_bp, url_prefix="/api/projects")
@@ -61,6 +62,7 @@ def create_app() -> Flask:
     app.register_blueprint(connections_bp, url_prefix="/api/connections")
     app.register_blueprint(manifest_bp, url_prefix="/api/manifest")
     app.register_blueprint(config_bp, url_prefix="/api/config")
+    app.register_blueprint(browser_bp, url_prefix="/api/browser")
 
     from app.projects.registry import register_all_project_blueprints
 

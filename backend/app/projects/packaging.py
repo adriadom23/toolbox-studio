@@ -39,6 +39,15 @@ def build_package(project_name: str) -> Path:
     stamp = datetime.now().strftime("%Y%m%d-%H%M%S")
     zip_path = submissions_dir / f"{project_name}-{stamp}.zip"
 
+    # The backend half accumulates `__pycache__/*.pyc` the moment
+    # `register_all_project_blueprints` (app/projects/registry.py) imports
+    # its routes.py — host-specific compiled bytecode, not source the
+    # owner reviewing the submission needs. Exclude it the same way a
+    # `.gitignore` would (design.md's own `backend/.gitignore` already
+    # excludes `__pycache__/` from the Studio repo itself; the submitted
+    # package should hold the same standard).
+    _SKIP_DIR_NAMES = {"__pycache__"}
+
     with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as zf:
         for base, arc_prefix in (
             (fe_dir, f"frontend/{project_name}"),
@@ -46,6 +55,8 @@ def build_package(project_name: str) -> Path:
         ):
             for file_path in base.rglob("*"):
                 if file_path.is_dir():
+                    continue
+                if _SKIP_DIR_NAMES & set(file_path.relative_to(base).parts[:-1]):
                     continue
                 arcname = f"{arc_prefix}/{file_path.relative_to(base)}"
                 zf.write(file_path, arcname)

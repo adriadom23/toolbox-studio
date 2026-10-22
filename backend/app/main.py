@@ -36,6 +36,39 @@ try:
 
     _wz_reloader._find_watchdog_paths = _watchdog_paths  # type: ignore[attr-defined]
     _wz_reloader._find_stat_paths = _stat_paths  # type: ignore[attr-defined]
+
+    # --- Reload on newly-created files, not just edited ones ------------
+    #
+    # Werkzeug's own StatReloaderLoop.run_step only triggers a reload when
+    # a path IT ALREADY KNEW ABOUT gets a newer mtime; a path it is seeing
+    # for the first time is silently absorbed into its baseline
+    # (`self.mtimes[name] = mtime; continue`) without reloading. Studio's
+    # "create project" flow (app/projects/scaffold.py) atomically renames
+    # a freshly-written `app/projects/<name>/routes.py` into place while
+    # this dev server is already running — exactly the case Werkzeug's
+    # reloader does not treat as a change, so the new project's blueprint
+    # (registered once, at `create_app()` time — see app/projects/
+    # registry.py) would stay unreachable (404) until some unrelated edit
+    # elsewhere touched an already-watched file. That breaks this
+    # project's own promise, both to a Studio developer creating a project
+    # while `npm run dev` is running and to README.md's "already wired
+    # up, with zero manual registration steps". Wrap run_step so a path
+    # appearing for the first time *after* the loop's own first step
+    # (i.e. not part of the initial baseline) also triggers a reload.
+    _StatReloaderLoop = _wz_reloader.StatReloaderLoop
+    _orig_run_step = _StatReloaderLoop.run_step
+
+    def _run_step_detect_new_files(self):  # noqa: ANN001
+        seen_before = set(self.mtimes)
+        is_first_step = not seen_before
+        _orig_run_step(self)
+        if is_first_step:
+            return  # the loop's own initial baseline is not a "change"
+        newly_seen = set(self.mtimes) - seen_before
+        if newly_seen:
+            self.trigger_reload(sorted(newly_seen)[0])
+
+    _StatReloaderLoop.run_step = _run_step_detect_new_files  # type: ignore[method-assign]
 except Exception:  # pragma: no cover - fail-soft if werkzeug API changes
     pass
 

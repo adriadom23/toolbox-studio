@@ -62,6 +62,26 @@ def test_build_package_produces_correct_zip_and_manifest(isolated_project):
         assert "packaged_at" in manifest
 
 
+def test_build_package_excludes_pycache(isolated_project):
+    """A project's backend folder accumulates `__pycache__/*.pyc` the
+    moment `register_all_project_blueprints` imports its routes.py
+    (app/projects/registry.py) — host-specific compiled bytecode that a
+    submitted package must not ship (it is not source the owner needs to
+    review, and matches the Studio repo's own `.gitignore` policy)."""
+
+    be_dir = packaging.BACKEND_PROJECTS_DIR / isolated_project
+    pycache_dir = be_dir / "__pycache__"
+    pycache_dir.mkdir()
+    (pycache_dir / "routes.cpython-313.pyc").write_bytes(b"\x00\x01")
+
+    zip_path = packaging.build_package(isolated_project)
+
+    with zipfile.ZipFile(zip_path) as zf:
+        names = zf.namelist()
+        assert not any("__pycache__" in name for name in names)
+        assert f"backend/{isolated_project}/routes.py" in names
+
+
 def test_build_package_missing_project_raises():
     with pytest.raises(packaging.ProjectNotFoundError):
         packaging.build_package("does-not-exist")
