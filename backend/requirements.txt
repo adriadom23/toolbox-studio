@@ -1,0 +1,21 @@
+# Toolbox Studio backend — mandatory
+Flask
+flask-cors
+python-dotenv
+requests
+pandas
+openpyxl
+websocket-client
+beautifulsoup4
+
+# Optional — unlock specific vendored-integration code paths.
+# Uncomment only what you need; every integration file that touches these
+# already degrades gracefully (ImportError-guarded) without them.
+# boto3            # email_client.py: EMAIL_TRANSPORT=ses
+# pywin32          # email_client.py: EMAIL_TRANSPORT=outlook (Windows only)
+# weasyprint       # html_to_pdf.py: one of three interchangeable PDF backends
+# truststore       # _ssl_truststore.py: lets `requests` trust the OS cert
+                   # store, needed on a corporate TLS-intercepting proxy
+                   # (see §1.7); the install_os_trust_store() CALL is always
+                   # made at boot (§4.2) — only the package itself is
+                   # optional, degrading to a logged warning without it.

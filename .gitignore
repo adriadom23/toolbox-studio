@@ -1,0 +1,34 @@
+# Python
+__pycache__/
+**/__pycache__/
+*.py[cod]
+.venv/
+venv/
+**/venv/
+
+# Node
+node_modules/
+frontend/dist/
+frontend/.vite/
+
+# Studio local config/secrets
+backend/config/studio.config.json
+.env
+.env.local
+
+# Runtime data (project submissions, caches)
+backend/data/*
+!backend/data/.gitkeep
+submissions/
+backend/submissions/
+
+# Logs/temp
+*.log
+*.tmp
+.pytest_cache/
+
+# IDE/OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

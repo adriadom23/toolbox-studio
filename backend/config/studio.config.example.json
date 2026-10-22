@@ -1,0 +1,14 @@
+{
+  "owners": ["adriadom", "zesparzj"],
+  "notifications": {
+    "email": {
+      "enabled": true,
+      "to": ["adriadom@amazon.com", "zesparzj@amazon.com"],
+      "transport": "smtp"
+    },
+    "slack": {
+      "enabled": false,
+      "webhook_url": ""
+    }
+  }
+}
