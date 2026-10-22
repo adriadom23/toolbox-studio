@@ -1,0 +1,94 @@
+{
+  "_comment": "Mapa de visuales QuickSight para Station Bridge (DO). Generado desde backend/scripts/qs_discover.py el 2026-08-12. Si un dashboard se republica y rotan los ids, re-ejecutar el discovery y actualizar aqui (o via env QS_BRIDGE_MAP_FILE).",
+  "alias": "amzlbiaquicksight",
+  "region": "us-east-1",
+  "dashboards": {
+    "scorecard": {
+      "dashboard_id": "5e1897e0-d741-4d24-ab6e-3dc75116e8f0",
+      "status_sheet_id": "5e1897e0-d741-4d24-ab6e-3dc75116e8f0_0c36d33f-2e15-4ed8-8626-c81fed243f39"
+    },
+    "service_type": {
+      "dashboard_id": "8fa1384c-284f-4b11-9912-a8cf38b0f2c0",
+      "status_sheet_id": "8fa1384c-284f-4b11-9912-a8cf38b0f2c0_e4620b88-5b00-4806-84be-c6a37a7d382d"
+    },
+    "dpr_compliance": {
+      "dashboard_id": "52950eb4-874d-4d0d-9aaf-1f9884d3584b",
+      "status_sheet_id": "52950eb4-874d-4d0d-9aaf-1f9884d3584b_2693e385-bde0-47e7-bb50-deb761fdee0d"
+    }
+  },
+  "visuals": [
+    {
+      "key": "overview",
+      "dashboard": "scorecard",
+      "title": "Delivery Station Overview",
+      "type": "TABLE",
+      "sheet_id": "5e1897e0-d741-4d24-ab6e-3dc75116e8f0_108319e0-fc2a-4298-ac08-51585d600256",
+      "visual_id": "5e1897e0-d741-4d24-ab6e-3dc75116e8f0_3ff97252-a626-4bb1-8586-959dfc3c0380",
+      "stream_source_id": "0882157a-dac8-40c7-aa06-1bde2bddc69f",
+      "station_column": "87ff3165-ed17-4f73-91e4-0c984296b8d8.location",
+      "columns": [
+        {"id": "87ff3165-ed17-4f73-91e4-0c984296b8d8.week", "name": "week", "axis": "GROUP_BY", "agg": null},
+        {"id": "87ff3165-ed17-4f73-91e4-0c984296b8d8.location", "name": "location", "axis": "GROUP_BY", "agg": null},
+        {"id": "87ff3165-ed17-4f73-91e4-0c984296b8d8.Adjusted Score", "name": "adjusted_score", "axis": "GROUP_BY", "agg": null},
+        {"id": "87ff3165-ed17-4f73-91e4-0c984296b8d8.dense_rank", "name": "rank", "axis": "GROUP_BY", "agg": null},
+        {"id": "87ff3165-ed17-4f73-91e4-0c984296b8d8.country", "name": "country", "axis": "GROUP_BY", "agg": null}
+      ]
+    },
+    {
+      "key": "deep_dive",
+      "dashboard": "scorecard",
+      "title": "Deep Dive",
+      "type": "PIVOT_TABLE",
+      "sheet_id": "5e1897e0-d741-4d24-ab6e-3dc75116e8f0_0c36d33f-2e15-4ed8-8626-c81fed243f39",
+      "visual_id": "5e1897e0-d741-4d24-ab6e-3dc75116e8f0_18cc63f1-0a2a-4840-9456-54c846a40177",
+      "stream_source_id": "0a0c990d-a7b0-4183-9c78-5950a682afb9",
+      "station_column": "53fb41ff-fa75-4eeb-9b16-75ee7c370e5b.location",
+      "columns": [
+        {"id": "53fb41ff-fa75-4eeb-9b16-75ee7c370e5b.location", "name": "location", "axis": "GROUP_BY", "agg": null},
+        {"id": "53fb41ff-fa75-4eeb-9b16-75ee7c370e5b.year", "name": "year", "axis": "GROUP_BY", "agg": null},
+        {"id": "53fb41ff-fa75-4eeb-9b16-75ee7c370e5b.week", "name": "week", "axis": "GROUP_BY", "agg": null},
+        {"id": "53fb41ff-fa75-4eeb-9b16-75ee7c370e5b.Category", "name": "category", "axis": "GROUP_BY", "agg": null},
+        {"id": "53fb41ff-fa75-4eeb-9b16-75ee7c370e5b.metric_name", "name": "metric_name", "axis": "GROUP_BY", "agg": null},
+        {"id": "53fb41ff-fa75-4eeb-9b16-75ee7c370e5b.metric_value", "name": "metric_value", "axis": "METRIC", "agg": "AVG"},
+        {"id": "53fb41ff-fa75-4eeb-9b16-75ee7c370e5b.metric_actual_value", "name": "metric_actual_value", "axis": "METRIC", "agg": "AVG"},
+        {"id": "53fb41ff-fa75-4eeb-9b16-75ee7c370e5b.max_score_obtainable", "name": "max_score_obtainable", "axis": "METRIC", "agg": "AVG"},
+        {"id": "53fb41ff-fa75-4eeb-9b16-75ee7c370e5b.target", "name": "target", "axis": "METRIC", "agg": "AVG"},
+        {"id": "53fb41ff-fa75-4eeb-9b16-75ee7c370e5b.target_score", "name": "target_score", "axis": "METRIC", "agg": "AVG"}
+      ]
+    },
+    {
+      "key": "service_type",
+      "dashboard": "service_type",
+      "title": "SEU STC (per station, route-level rows)",
+      "type": "KPI",
+      "sheet_id": "8fa1384c-284f-4b11-9912-a8cf38b0f2c0_e4620b88-5b00-4806-84be-c6a37a7d382d",
+      "visual_id": "8fa1384c-284f-4b11-9912-a8cf38b0f2c0_4b305929-8213-426c-9867-2477554d5f21",
+      "stream_source_id": "4dc10904-3cb0-4f94-9010-8883a024de11",
+      "station_column": "0f693b6c-e9cd-47da-aa6c-9221e4c7ee55.location",
+      "columns": [
+        {"id": "0f693b6c-e9cd-47da-aa6c-9221e4c7ee55.location", "name": "station", "axis": "GROUP_BY", "agg": null},
+        {"id": "0f693b6c-e9cd-47da-aa6c-9221e4c7ee55.date", "name": "date", "axis": "GROUP_BY", "agg": null},
+        {"id": "0f693b6c-e9cd-47da-aa6c-9221e4c7ee55.compliant", "name": "compliant", "axis": "GROUP_BY", "agg": null},
+        {"id": "0f693b6c-e9cd-47da-aa6c-9221e4c7ee55.route_id", "name": "routes", "axis": "METRIC", "agg": "COUNT"}
+      ]
+    },
+    {
+      "key": "dpr_actions",
+      "dashboard": "dpr_compliance",
+      "title": "REGIONAL DPR COMPLIANCE (action items per station)",
+      "type": "PIVOT_TABLE",
+      "sheet_id": "52950eb4-874d-4d0d-9aaf-1f9884d3584b_2693e385-bde0-47e7-bb50-deb761fdee0d",
+      "visual_id": "52950eb4-874d-4d0d-9aaf-1f9884d3584b_bafeb505-9573-4fac-9f3c-884f8f52fef3",
+      "stream_source_id": "0f6a4f94-e084-413b-a20b-1a5909447719",
+      "station_column": "a5d913e0-64fc-4fde-9db4-d49469d85e0b.station",
+      "columns": [
+        {"id": "a5d913e0-64fc-4fde-9db4-d49469d85e0b.station", "name": "station", "axis": "GROUP_BY", "agg": null},
+        {"id": "a5d913e0-64fc-4fde-9db4-d49469d85e0b.week", "name": "week", "axis": "GROUP_BY", "agg": null},
+        {"id": "a5d913e0-64fc-4fde-9db4-d49469d85e0b.dsp", "name": "dsp", "axis": "GROUP_BY", "agg": null},
+        {"id": "a5d913e0-64fc-4fde-9db4-d49469d85e0b.status", "name": "status", "axis": "GROUP_BY", "agg": null},
+        {"id": "a5d913e0-64fc-4fde-9db4-d49469d85e0b.metric_dpr", "name": "metric_dpr", "axis": "GROUP_BY", "agg": null},
+        {"id": "a5d913e0-64fc-4fde-9db4-d49469d85e0b.action_item", "name": "items", "axis": "METRIC", "agg": "COUNT"}
+      ]
+    }
+  ]
+}

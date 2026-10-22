@@ -1,0 +1,427 @@
+.tb-button {
+  min-height: 38px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 14px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    background 150ms ease,
+    border-color 150ms ease,
+    color 150ms ease,
+    transform 150ms ease;
+}
+
+.tb-button:hover {
+  transform: translateY(-1px);
+}
+
+.tb-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+  transform: none;
+}
+
+.tb-button--primary {
+  border-color: var(--toolbox-accent);
+  color: #ffffff;
+  background: var(--toolbox-accent);
+}
+
+.tb-button--primary:hover:not(:disabled) {
+  border-color: var(--toolbox-accent-hover);
+  background: var(--toolbox-accent-hover);
+}
+
+.tb-button--success {
+  border-color: #2b7a3e;
+  color: #ffffff;
+  background: #2b7a3e;
+}
+
+.tb-button--success:hover:not(:disabled) {
+  border-color: #236832;
+  background: #236832;
+}
+
+.tb-button--ghost {
+  border-color: rgb(var(--toolbox-border-rgb) / 76%);
+  color: var(--toolbox-accent);
+  background: rgb(var(--toolbox-panel-rgb) / 52%);
+}
+
+.tb-button--ghost:hover:not(:disabled) {
+  color: var(--toolbox-accent-hover);
+  background: var(--toolbox-accent-soft);
+}
+
+.tb-checkbox {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 34px;
+  color: var(--toolbox-text);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.tb-checkbox input {
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  accent-color: var(--toolbox-accent);
+}
+
+.tb-field {
+  display: grid;
+  gap: 8px;
+  color: var(--toolbox-muted);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.tb-field input,
+.tb-field select,
+.tb-field textarea,
+.tb-input,
+.tb-select,
+.tb-textarea {
+  width: 100%;
+  border: 1px solid rgb(var(--toolbox-border-rgb) / 76%);
+  border-radius: 8px;
+  color: var(--toolbox-text);
+  background: rgb(var(--toolbox-surface-rgb) / 58%);
+  font: inherit;
+}
+
+.tb-input,
+.tb-select,
+.tb-field input,
+.tb-field select {
+  min-height: 38px;
+  padding: 0 10px;
+}
+
+.tb-textarea,
+.tb-field textarea {
+  min-height: 180px;
+  padding: 12px;
+  resize: vertical;
+  line-height: 1.5;
+}
+
+.tb-help {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border: 1px solid rgb(var(--toolbox-border-rgb) / 76%);
+  border-radius: 50%;
+  color: var(--toolbox-accent);
+  background: rgb(var(--toolbox-panel-rgb) / 58%);
+  font-weight: 800;
+  cursor: help;
+}
+
+.tb-help[data-tooltip]::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  right: 0;
+  top: calc(100% + 8px);
+  z-index: 10050;
+  width: min(360px, 80vw);
+  padding: 10px 12px;
+  border-radius: 8px;
+  color: var(--toolbox-tooltip-fg);
+  background: var(--toolbox-tooltip-bg);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.45;
+  text-transform: none;
+  box-shadow: 0 12px 30px rgb(var(--toolbox-shadow-rgb) / 18%);
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-4px);
+  transition:
+    opacity 120ms ease,
+    transform 120ms ease;
+}
+
+.tb-help:hover {
+  z-index: 10050;
+}
+
+.tb-help[data-tooltip]:hover::after {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Minimized by default: manual upload is the fallback path in most
+   tools (automated sources fill the slots), so the boxes stay compact
+   instead of the old 190px-tall cards. Drag & drop and click-to-pick
+   keep working exactly the same. */
+.tb-dropzone {
+  display: grid;
+  place-items: center;
+  min-height: 0;
+  padding: 10px 14px;
+  border: 1.5px dashed rgb(31 111 139 / 58%);
+  border-radius: 8px;
+  color: var(--toolbox-text);
+  background: rgb(var(--toolbox-surface-rgb) / 36%);
+  text-align: center;
+  cursor: pointer;
+  transition:
+    background 160ms ease,
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    transform 160ms ease;
+}
+
+.tb-dropzone:hover,
+.tb-dropzone.is-over {
+  border-color: var(--toolbox-accent);
+  background: rgb(220 239 244 / 64%);
+  box-shadow: inset 0 0 0 1px rgb(31 111 139 / 22%);
+}
+
+.tb-dropzone.has-file {
+  border-style: solid;
+  border-color: var(--toolbox-success);
+  background: var(--toolbox-success-soft);
+}
+
+.tb-dropzone.has-file .tb-dropzone__check {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--toolbox-success);
+  color: var(--toolbox-check-fg, #1f2933);
+  font-size: 12px;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.tb-dropzone.has-error {
+  border-style: solid;
+  border-color: #b34b4b;
+  background: rgb(255 235 235 / 72%);
+}
+
+.tb-dropzone__content {
+  display: grid;
+  gap: 3px;
+}
+
+.tb-dropzone__title {
+  color: var(--toolbox-text);
+  font-weight: 800;
+  font-size: 13px;
+}
+
+.tb-dropzone__meta {
+  color: var(--toolbox-muted);
+  font-size: 11.5px;
+}
+
+.tb-panel-glass {
+  border: 1px solid rgb(var(--toolbox-border-rgb) / 70%);
+  border-radius: 8px;
+  background: rgb(var(--toolbox-panel-rgb) / 46%);
+  backdrop-filter: blur(12px) saturate(130%);
+  -webkit-backdrop-filter: blur(12px) saturate(130%);
+  box-shadow: 0 18px 48px rgb(var(--toolbox-shadow-rgb) / 8%);
+}
+
+.tb-table-wrap {
+  overflow: auto;
+  border: 1px solid rgb(var(--toolbox-border-rgb) / 60%);
+  border-radius: 8px;
+}
+
+.tb-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: rgb(var(--toolbox-surface-rgb) / 48%);
+  font-size: 13px;
+}
+
+.tb-table th,
+.tb-table td {
+  padding: 8px;
+  border-bottom: 1px solid rgb(var(--toolbox-border-rgb) / 60%);
+  text-align: left;
+  vertical-align: top;
+}
+
+.tb-table th {
+  color: var(--toolbox-text);
+  background: rgb(220 239 244 / 54%);
+  font-size: 12px;
+  text-transform: uppercase;
+}
+
+.tb-table td {
+  color: var(--toolbox-muted);
+}
+
+.tb-result-box {
+  margin-top: 14px;
+  padding: 14px;
+  border-radius: 8px;
+  background: rgb(var(--toolbox-surface-rgb) / 58%);
+}
+
+.tb-result-box.success {
+  border: 1px solid var(--toolbox-accent);
+}
+
+.tb-result-box.failed {
+  border: 1px solid #b34b4b;
+}
+
+/* Green check badge flashed on a send button after a message is sent.
+   Rendered as a body-level overlay (see shared/sendButtonFeedback.js) so
+   Vue re-renders never wipe it. Positioned at the button's top-right. */
+.tb-send-check {
+  position: absolute;
+  z-index: 100000;
+  width: 22px;
+  height: 22px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--toolbox-success, #2b7a3e);
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 900;
+  line-height: 1;
+  box-shadow: 0 2px 8px rgb(0 0 0 / 30%);
+  opacity: 0;
+  transform: scale(0.4);
+  transition:
+    opacity 180ms ease,
+    transform 180ms ease;
+  pointer-events: none;
+}
+
+.tb-send-check.is-visible {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* A send button (Slack / email / ...) that was just clicked. It turns green
+   and stays disabled for ~30s (see shared/sendButtonFeedback.js) so the
+   operator can't fire the same message twice by mistake. Blocking is done in
+   JS; these styles are the visual affordance. */
+.tb-send-locked,
+.tb-send-locked:hover,
+.tb-send-locked:focus {
+  background: var(--toolbox-success, #2b7a3e) !important;
+  border-color: var(--toolbox-success, #2b7a3e) !important;
+  color: #ffffff !important;
+  cursor: default !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+.tb-send-locked * {
+  color: #ffffff !important;
+}
+
+/* "Procesando..." overlay shown over the button the operator clicked while
+   its backend request is in flight (see shared/processingButtonFeedback.js).
+   Rendered as a body-level fixed overlay so Vue re-renders never wipe it;
+   background/color/font/radius are copied from the button at attach time so
+   it visually reads as the button itself changing its label. */
+.tb-btn-processing {
+  position: fixed;
+  z-index: 100000;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-sizing: border-box;
+  padding: 0 8px;
+  overflow: hidden;
+  white-space: nowrap;
+  cursor: progress;
+  user-select: none;
+}
+
+/* Variant applied when the clicked button ends up covered by a modal (the
+   click opened a dialog while its request is still in flight): the overlay
+   detaches from the button and floats as a pill centered in the modal
+   shell (see coveringModalShell in processingButtonFeedback.js). */
+.tb-btn-processing--centered {
+  padding: 10px 18px;
+  transform: translate(-50%, -50%);
+  border: 1px solid rgb(var(--toolbox-border-rgb) / 65%);
+  box-shadow: 0 10px 28px rgb(0 0 0 / 30%);
+}
+
+.tb-btn-processing__spinner {
+  flex: none;
+  width: 13px;
+  height: 13px;
+  border: 2px solid currentcolor;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: tb-btn-processing-spin 0.8s linear infinite;
+}
+
+@keyframes tb-btn-processing-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* ── Tool headers: título centrado en TODAS las herramientas ──
+   Instrucción del usuario (2026-08-20): los títulos de los headers de
+   herramienta van centrados (patrón que ya usaba Forecast +3Wks). Cada
+   .vue trae su propio .tool-header scoped (normalmente con
+   justify-content: space-between); estas reglas globales lo pisan con
+   !important porque los selectores scoped ([data-v-*]) ganan en
+   especificidad. Las acciones (? + Volver) se anclan a la derecha en
+   absoluto, como hacía MetisPlan. */
+.tool-header {
+  position: relative !important;
+  justify-content: center !important;
+  text-align: center;
+}
+
+.tool-header .header-actions {
+  position: absolute !important;
+  top: 50% !important;
+  right: 18px !important;
+  transform: translateY(-50%) !important;
+  flex-wrap: nowrap !important;
+  margin: 0 !important;
+}
+
+/* Opt-out: cabeceras con el título a la IZQUIERDA.
+   Instrucción del usuario (2026-08-20): en Configuración el título va a
+   la izquierda (su botonera es ancha y el centrado la solapaba). Ídem
+   Tareas AM/PM/NS/DO (instrucción 2026-08-20, misma tarde). Se aplica
+   añadiendo la clase tool-header--left al header. */
+.tool-header--left {
+  justify-content: space-between !important;
+  text-align: left;
+}
+
+.tool-header--left .header-actions {
+  position: static !important;
+  transform: none !important;
+  flex-wrap: wrap !important;
+}

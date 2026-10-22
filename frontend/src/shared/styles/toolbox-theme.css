@@ -1,0 +1,408 @@
+:root {
+  color-scheme: light;
+
+  /* Estilo de letra (selector del navbar, shared/fontStyle.js). Presets de
+     fuentes de sistema + webfonts EMPAQUETADAS en el exe (toolbox-fonts.css,
+     Fontsource en build): nada se descarga en runtime, offline intacto. El
+     preset por defecto ("classic") son los stacks históricos de la Toolbox. */
+  --tb-font-body: Verdana, Tahoma, "Segoe UI", ui-sans-serif, system-ui, sans-serif;
+  --tb-font-heading: "Trebuchet MS", "Century Gothic", Verdana, sans-serif;
+
+  /* Tripletas RGB para usar con rgb(var(--token) / alpha) */
+  --toolbox-surface-rgb: 255 255 255;
+  --toolbox-panel-rgb: 253 252 249;
+  --toolbox-border-rgb: 214 222 230;
+  --toolbox-shadow-rgb: 31 41 51;
+  --toolbox-accent-rgb: 31 111 139;
+  --toolbox-accent-soft-rgb: 220 239 244;
+  --toolbox-text-rgb: 31 41 51;
+
+  /* Tokens de color */
+  --toolbox-bg-top: #f7f4ef;
+  --toolbox-bg-bottom: #e7eff6;
+  --toolbox-panel: #fdfcf9;
+  --toolbox-card: #ffffff;
+  --toolbox-border: #d6dee6;
+  --toolbox-text: #1f2933;
+  --toolbox-muted: #5b6b7a;
+  --toolbox-accent: #1f6f8b;
+  --toolbox-accent-hover: #195c73;
+  --toolbox-accent-soft: #dceff4;
+  --toolbox-accent-soft-2: #f2e7da;
+  --toolbox-tooltip-bg: #1f2933;
+  --toolbox-tooltip-fg: #fdfcf9;
+
+  /* Alias legacy usados por componentes antiguos (siguen el tema) */
+  --toolbox-surface: var(--toolbox-card);
+  --toolbox-card-bg: var(--toolbox-card);
+  --toolbox-text-muted: var(--toolbox-muted);
+  --toolbox-ok: var(--toolbox-success);
+  --toolbox-warn: var(--toolbox-warning);
+
+  /* Estados auxiliares */
+  --toolbox-success: #4b8f5c;
+  --toolbox-success-soft: rgb(223 245 235 / 70%);
+  --toolbox-warning: #c47c16;
+  --toolbox-warning-soft: rgb(255 235 220 / 70%);
+  --toolbox-danger: #b34b4b;
+  --toolbox-danger-soft: rgb(255 235 235 / 72%);
+  --toolbox-disabled-soft: #edf0f4;
+  --toolbox-check-fg: #1f2933;
+}
+
+/* Presets de estilo de letra (data-font en <html>; sin atributo = classic).
+   Ids estables — ver FONT_STYLES en shared/fontStyle.js. */
+[data-font="modern"] {
+  --tb-font-body: "Segoe UI", ui-sans-serif, system-ui, Tahoma, sans-serif;
+  --tb-font-heading: "Segoe UI", ui-sans-serif, system-ui, Tahoma, sans-serif;
+}
+
+[data-font="humanist"] {
+  --tb-font-body: Calibri, Candara, "Segoe UI", ui-sans-serif, sans-serif;
+  --tb-font-heading: Candara, Calibri, "Segoe UI", ui-sans-serif, sans-serif;
+}
+
+[data-font="serif"] {
+  --tb-font-body: Georgia, Cambria, "Times New Roman", serif;
+  --tb-font-heading: Cambria, Georgia, "Times New Roman", serif;
+}
+
+[data-font="casual"] {
+  --tb-font-body: "Comic Sans MS", "Segoe Print", "Trebuchet MS", sans-serif;
+  --tb-font-heading: "Comic Sans MS", "Segoe Print", "Trebuchet MS", sans-serif;
+}
+
+/* Presets con webfonts empaquetadas (toolbox-fonts.css, Fontsource en
+   build). El fallback de sistema cubre glifos fuera de latin/latin-ext. */
+[data-font="inter"] {
+  --tb-font-body: "Inter", "Segoe UI", ui-sans-serif, system-ui, sans-serif;
+  --tb-font-heading: "Inter", "Segoe UI", ui-sans-serif, system-ui, sans-serif;
+}
+
+[data-font="nunito"] {
+  --tb-font-body: "Nunito", "Segoe UI", ui-sans-serif, system-ui, sans-serif;
+  --tb-font-heading: "Nunito", "Segoe UI", ui-sans-serif, system-ui, sans-serif;
+}
+
+[data-font="poppins"] {
+  --tb-font-body: "Poppins", "Segoe UI", ui-sans-serif, system-ui, sans-serif;
+  --tb-font-heading: "Poppins", "Segoe UI", ui-sans-serif, system-ui, sans-serif;
+}
+
+/* Quicksand y Lora no publican peso 800: el matching de CSS cae al 700. */
+[data-font="quicksand"] {
+  --tb-font-body: "Quicksand", "Segoe UI", ui-sans-serif, system-ui, sans-serif;
+  --tb-font-heading: "Quicksand", "Segoe UI", ui-sans-serif, system-ui, sans-serif;
+}
+
+[data-font="jetbrains"] {
+  --tb-font-body: "JetBrains Mono", ui-monospace, Consolas, monospace;
+  --tb-font-heading: "JetBrains Mono", ui-monospace, Consolas, monospace;
+}
+
+[data-font="lora"] {
+  --tb-font-body: "Lora", Georgia, Cambria, serif;
+  --tb-font-heading: "Lora", Georgia, Cambria, serif;
+}
+
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  --toolbox-surface-rgb: 38 50 64;
+  --toolbox-panel-rgb: 28 38 50;
+  --toolbox-border-rgb: 80 96 114;
+  --toolbox-shadow-rgb: 0 0 0;
+  --toolbox-accent-rgb: 84 178 204;
+  --toolbox-accent-soft-rgb: 31 70 86;
+  --toolbox-text-rgb: 228 236 243;
+
+  --toolbox-bg-top: #121821;
+  --toolbox-bg-bottom: #0d141d;
+  --toolbox-panel: #1c2632;
+  --toolbox-card: #212c39;
+  --toolbox-border: #34465a;
+  --toolbox-text: #e4ecf3;
+  --toolbox-muted: #9fb1c4;
+  --toolbox-accent: #54b2cc;
+  --toolbox-accent-hover: #7ec5dc;
+  --toolbox-accent-soft: #1f4656;
+  --toolbox-accent-soft-2: #3a3326;
+  --toolbox-tooltip-bg: #e4ecf3;
+  --toolbox-tooltip-fg: #1c2632;
+
+  --toolbox-success: #6ec48a;
+  --toolbox-success-soft: rgb(38 70 56 / 70%);
+  --toolbox-warning: #e0a858;
+  --toolbox-warning-soft: rgb(72 56 32 / 70%);
+  --toolbox-danger: #e07b7b;
+  --toolbox-danger-soft: rgb(80 36 36 / 72%);
+  --toolbox-disabled-soft: #2a3543;
+  --toolbox-check-fg: #ffffff;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#app {
+  min-height: 100%;
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  overflow: hidden;
+  color: var(--toolbox-text);
+  font-family: var(--tb-font-body);
+  background: var(--toolbox-bg-top);
+  transition: background-color 200ms ease, color 200ms ease;
+}
+
+/* El zoom de contenido (navbar +/− combinado con la letra "Texto general")
+   se aplica como CSS `zoom` sobre .app-content y App.vue publica el factor
+   en --tb-content-zoom. Dentro de esa zona, un `100vh` ya no equivale a la
+   altura real de la ventana (con zoom < 100% el fondo de las herramientas
+   se quedaba corto y asomaba el body por debajo). Esta regla compensa el
+   min-height de TODAS las superficies de herramienta dividiendo por el
+   factor — gana a los `min-height: 100vh` scoped de cada .vue por
+   especificidad (.app-layout .app-content .tool-surface). */
+.app-layout .app-content .tool-surface {
+  min-height: calc(100vh / var(--tb-content-zoom, 1));
+}
+
+/* SweetAlert2 — shared Toolbox theme. The CSS variables update with data-theme. */
+.toolbox-swal-container {
+  z-index: 12000;
+  padding: 1rem;
+}
+
+.toolbox-swal-popup {
+  width: min(32rem, calc(100vw - 2rem));
+  padding: 1.5rem;
+  border: 1px solid var(--toolbox-border);
+  border-radius: 16px;
+  color: var(--toolbox-text);
+  background: var(--toolbox-card);
+  box-shadow: 0 20px 50px rgb(var(--toolbox-shadow-rgb) / 24%);
+}
+
+.toolbox-swal-title {
+  padding: 0;
+  color: var(--toolbox-text);
+  font-size: clamp(1.2rem, 4vw, 1.5rem);
+  line-height: 1.3;
+}
+
+.toolbox-swal-content {
+  margin: 0.75rem 0 0;
+  padding: 0;
+  color: var(--toolbox-muted);
+  font-size: 0.95rem;
+  line-height: 1.55;
+}
+
+.toolbox-swal-actions {
+  gap: 0.65rem;
+  margin: 1.35rem 0 0;
+  flex-wrap: wrap;
+}
+
+.toolbox-swal-button {
+  min-height: 2.75rem;
+  max-width: 100%;
+  padding: 0.65rem 1.15rem;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  font: inherit;
+  font-weight: 700;
+  white-space: normal;
+  overflow-wrap: break-word;
+  cursor: pointer;
+  transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease,
+    box-shadow 160ms ease, transform 160ms ease;
+}
+
+/* Tool picker (missing-dependency prompt): themed, never wider than the
+   popup, so long localized tool names don't clip in narrow / split views. */
+.toolbox-swal-popup .toolbox-swal-select {
+  width: 100%;
+  max-width: 100%;
+  margin: 1rem 0 0;
+  padding: 0.55rem 0.75rem;
+  border: 1px solid var(--toolbox-border);
+  border-radius: 10px;
+  color: var(--toolbox-text);
+  background: var(--toolbox-panel);
+  font: inherit;
+  font-size: 0.95rem;
+  text-overflow: ellipsis;
+}
+
+.toolbox-swal-popup .toolbox-swal-select:focus-visible {
+  outline: 3px solid rgb(var(--toolbox-accent-rgb) / 35%);
+  outline-offset: 2px;
+}
+
+.toolbox-swal-number-intro {
+  margin: 0 0 12px;
+  color: var(--toolbox-text-soft);
+  text-align: left;
+}
+
+.toolbox-swal-number-grid {
+  display: grid;
+  gap: 10px;
+}
+
+.toolbox-swal-number-field {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(120px, 0.45fr);
+  gap: 12px;
+  align-items: center;
+  color: var(--toolbox-text);
+  font-weight: 700;
+  text-align: left;
+}
+
+.toolbox-swal-number-input {
+  width: 100%;
+  min-width: 0;
+  padding: 0.55rem 0.7rem;
+  border: 1px solid var(--toolbox-border);
+  border-radius: 10px;
+  color: var(--toolbox-text);
+  background: var(--toolbox-panel);
+  font: inherit;
+  font-variant-numeric: tabular-nums;
+}
+
+.toolbox-swal-number-input:focus-visible {
+  outline: 3px solid rgb(var(--toolbox-accent-rgb) / 35%);
+  outline-offset: 2px;
+}
+
+@media (max-width: 520px) {
+  .toolbox-swal-number-field {
+    grid-template-columns: 1fr;
+    gap: 5px;
+  }
+}
+
+.toolbox-swal-button:hover {
+  transform: translateY(-1px);
+}
+
+.toolbox-swal-button:focus-visible {
+  outline: 3px solid rgb(var(--toolbox-accent-rgb) / 35%);
+  outline-offset: 3px;
+}
+
+.toolbox-swal-button--confirm {
+  color: #fff;
+  background: var(--toolbox-accent);
+}
+
+[data-theme="dark"] .toolbox-swal-button--confirm {
+  color: #101820;
+}
+
+.toolbox-swal-button--confirm:hover {
+  background: var(--toolbox-accent-hover);
+}
+
+.toolbox-swal-button--cancel {
+  border-color: var(--toolbox-border);
+  color: var(--toolbox-text);
+  background: var(--toolbox-panel);
+}
+
+.toolbox-swal-button--cancel:hover {
+  border-color: var(--toolbox-accent);
+  color: var(--toolbox-accent);
+  background: var(--toolbox-accent-soft);
+}
+
+.toolbox-swal-popup .swal2-icon.swal2-error {
+  border-color: var(--toolbox-danger);
+  color: var(--toolbox-danger);
+}
+
+.toolbox-swal-popup .swal2-icon.swal2-error [class^="swal2-x-mark-line"] {
+  background-color: var(--toolbox-danger);
+}
+
+.toolbox-swal-popup .swal2-icon.swal2-warning {
+  border-color: var(--toolbox-warning);
+  color: var(--toolbox-warning);
+}
+
+.toolbox-swal-enter {
+  animation: toolbox-swal-enter 180ms ease-out both;
+}
+
+.toolbox-swal-leave {
+  animation: toolbox-swal-leave 140ms ease-in both;
+}
+
+@keyframes toolbox-swal-enter {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes toolbox-swal-leave {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(5px) scale(0.98);
+  }
+}
+
+@media (max-width: 520px) {
+  .toolbox-swal-container {
+    padding: 0.65rem;
+  }
+
+  .toolbox-swal-popup {
+    width: calc(100vw - 1.3rem);
+    padding: 1.25rem 1rem;
+  }
+
+  .toolbox-swal-actions {
+    width: 100%;
+    flex-direction: column-reverse;
+  }
+
+  /* Prompts rendered with the primary action first in the DOM (e.g. the
+     missing-dependency alert, reverseButtons: false) must keep it on top
+     when the buttons stack. */
+  .toolbox-swal-actions--forward {
+    flex-direction: column;
+  }
+
+  .toolbox-swal-button {
+    width: 100%;
+    margin: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .toolbox-swal-enter,
+  .toolbox-swal-leave {
+    animation: none;
+  }
+
+  .toolbox-swal-button {
+    transition: none;
+  }
+}

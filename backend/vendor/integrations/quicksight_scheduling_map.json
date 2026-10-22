@@ -1,0 +1,1038 @@
+{
+ "dashboard_id": "5b821e9f-d9df-463b-92d0-1151c068704c",
+ "alias": "amzlbiaquicksight",
+ "region": "us-east-1",
+ "scheduling_sheet_id": "5b821e9f-d9df-463b-92d0-1151c068704c_9f8ade4c-e3c5-4463-92a4-11a903d566c3",
+ "visuals": [
+  {
+   "key": "nd_database",
+   "title": "ND-Database",
+   "type": "TABLE",
+   "sheet_id": "5b821e9f-d9df-463b-92d0-1151c068704c_9f8ade4c-e3c5-4463-92a4-11a903d566c3",
+   "visual_id": "5b821e9f-d9df-463b-92d0-1151c068704c_306cbb1e-bae8-402e-a473-7fe05cdb5840",
+   "stream_source_id": "3dc1b4a8-61b8-4680-88c1-4f0aefa9b8b8",
+   "columns": [
+    {
+     "id": "shed-outp-station-b9fdac",
+     "name": "station",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "shed-outp-cycle-4bdcc9",
+     "name": "cycle",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "shed-outp-ofd_date-dd7cdb",
+     "name": "ofd_date",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "shed-outp-uploadtyp-7fc987",
+     "name": "uploadtyp",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "shed-outp-siphon_ou-2269e0",
+     "name": "siphon_ou",
+     "axis": "VALUE",
+     "agg": "SUM"
+    },
+    {
+     "id": "shed-outp-max_route-869bf7",
+     "name": "max_route",
+     "axis": "VALUE",
+     "agg": "SUM"
+    },
+    {
+     "id": "shed-outp-ofd_volum-895d11",
+     "name": "ofd_volum",
+     "axis": "VALUE",
+     "agg": "SUM"
+    },
+    {
+     "id": "shed-outp-dsp_blend-8bc807",
+     "name": "dsp_blend",
+     "axis": "VALUE",
+     "agg": "SUM"
+    },
+    {
+     "id": "shed-outp-capacity-6cffd6",
+     "name": "capacity",
+     "axis": "VALUE",
+     "agg": "SUM"
+    },
+    {
+     "id": "shed-outp-capacity-c1196c",
+     "name": "capacity_c1196c",
+     "axis": "VALUE",
+     "agg": "SUM"
+    },
+    {
+     "id": "4ac6f5a7-7f9e-4397-ada4-552b8c25b846",
+     "name": "4ac6f5a7-7f9e-4397-ada4-552b8c25b846",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "shed-outp-country-7d47da",
+     "name": "country",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "shed-outp-snapshot_-f26a5f",
+     "name": "snapshot",
+     "axis": "GROUP_BY",
+     "agg": null
+    }
+   ]
+  },
+  {
+   "key": "nd_scheduling",
+   "title": "ND-Scheduling",
+   "type": "TABLE",
+   "sheet_id": "5b821e9f-d9df-463b-92d0-1151c068704c_9f8ade4c-e3c5-4463-92a4-11a903d566c3",
+   "visual_id": "5b821e9f-d9df-463b-92d0-1151c068704c_cc3ecab1-60b2-4a58-9a10-b28e4f481244",
+   "stream_source_id": "6114eb5d-68b0-4086-9ff4-dedb3c45653e",
+   "columns": [
+    {
+     "id": "shed-outp-station-36f87d",
+     "name": "station",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "shed-outp-cycle-6cf98f",
+     "name": "cycle",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "shed-outp-dsp-241492",
+     "name": "dsp",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "shed-outp-service_t-b85909",
+     "name": "service_t",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "shed-outp-route_len-f21751",
+     "name": "route_len",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "shed-outp-ofd_date-d27a40",
+     "name": "ofd_date",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "shed-outp-routes-2f0ea1",
+     "name": "routes",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "shed-outp-max_route-69546b",
+     "name": "max_route",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "shed-outp-spr-774959",
+     "name": "spr",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "shed-outp-volume-789371",
+     "name": "volume",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "shed-outp-actual_ds-11ed74",
+     "name": "actual_ds",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "shed-outp-planned_d-50b1ff",
+     "name": "planned_d",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "shed-outp-actual_ds-8e51ea",
+     "name": "actual_ds_8e51ea",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "shed-outp-unconstra-65ec9f",
+     "name": "unconstra",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "shed-outp-uploadtyp-6abbb3",
+     "name": "uploadtyp",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "62284a6e-ce00-4c18-85ad-7f613c1b3f3c",
+     "name": "62284a6e-ce00-4c18-85ad-7f613c1b3f3c",
+     "axis": "GROUP_BY",
+     "agg": null
+    }
+   ]
+  },
+  {
+   "key": "nd_allocation",
+   "title": "ND-Allocation",
+   "type": "TABLE",
+   "sheet_id": "5b821e9f-d9df-463b-92d0-1151c068704c_9f8ade4c-e3c5-4463-92a4-11a903d566c3",
+   "visual_id": "5b821e9f-d9df-463b-92d0-1151c068704c_9a981ac1-2b87-4722-9d2d-af4a1d24b878",
+   "stream_source_id": "f2d05657-0f2d-40dc-8904-52ff67645280",
+   "columns": [
+    {
+     "id": "shed-outp-servicear-303e65",
+     "name": "servicear",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "shed-outp-servicety-37a4d9",
+     "name": "servicety",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "shed-outp-year-42a8a6",
+     "name": "year",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "shed-outp-month-a1edf0",
+     "name": "month",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "shed-outp-day-77c085",
+     "name": "day",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "shed-outp-hoursdura-3aa94b",
+     "name": "hoursdura",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "shed-outp-starttime-9d7d91",
+     "name": "starttime",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "shed-outp-requiredr-f67e0d",
+     "name": "requiredr",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "shed-outp-provideri-93b8f5",
+     "name": "provideri",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "shed-outp-companysh-c5a4fd",
+     "name": "companysh",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "shed-outp-wavegroup-541037",
+     "name": "wavegroup",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "shed-outp-routetype-04cb23",
+     "name": "routetype",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "shed-outp-initialst-0f4444",
+     "name": "initialst",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "shed-outp-startloca-3f24f4",
+     "name": "startloca",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "shed-outp-startloca-ca568b",
+     "name": "startloca_ca568b",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "shed-outp-startloca-c1670d",
+     "name": "startloca_c1670d",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "shed-outp-region-bba20c",
+     "name": "region",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "shed-outp-uploadtyp-e1d8fd",
+     "name": "uploadtyp",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "14f4f4aa-c152-4376-9829-315dd58b4224",
+     "name": "14f4f4aa-c152-4376-9829-315dd58b4224",
+     "axis": "GROUP_BY",
+     "agg": null
+    }
+   ]
+  },
+  {
+   "key": "sd_database",
+   "title": "SD-Database",
+   "type": "TABLE",
+   "sheet_id": "5b821e9f-d9df-463b-92d0-1151c068704c_9f8ade4c-e3c5-4463-92a4-11a903d566c3",
+   "visual_id": "5b821e9f-d9df-463b-92d0-1151c068704c_21b91efd-1aca-461c-a021-d3cb961dc142",
+   "stream_source_id": "aca5db7b-d2e2-4ddc-99d8-a63803fa8e4b",
+   "columns": [
+    {
+     "id": "shed-outp-station-4d093e",
+     "name": "station",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "shed-outp-cycle-8f6523",
+     "name": "cycle",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "shed-outp-ofd_date-6367ba",
+     "name": "ofd_date",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "shed-outp-ofd_volum-314639",
+     "name": "ofd_volum",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "shed-outp-siphon_ou-39a539",
+     "name": "siphon_ou",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "shed-outp-max_route-c1f055",
+     "name": "max_route",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "shed-outp-dsp_blend-394f35",
+     "name": "dsp_blend",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "shed-outp-capacity-033012",
+     "name": "capacity",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "shed-outp-capacity-d0f7a5",
+     "name": "capacity_d0f7a5",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "bbbce6ff-0473-4e82-aee3-7bf796a36753",
+     "name": "bbbce6ff-0473-4e82-aee3-7bf796a36753",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "shed-outp-uploadtyp-2f3cd8",
+     "name": "uploadtyp",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "eeb63618-7a2c-4036-8cdf-d4f3711d3ae0",
+     "name": "eeb63618-7a2c-4036-8cdf-d4f3711d3ae0",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "shed-outp-snapshot_-50e919",
+     "name": "snapshot",
+     "axis": "GROUP_BY",
+     "agg": null
+    }
+   ]
+  },
+  {
+   "key": "sd_scheduling",
+   "title": "SD-Scheduling",
+   "type": "TABLE",
+   "sheet_id": "5b821e9f-d9df-463b-92d0-1151c068704c_9f8ade4c-e3c5-4463-92a4-11a903d566c3",
+   "visual_id": "5b821e9f-d9df-463b-92d0-1151c068704c_165d97f9-92a7-4ec8-b917-085abc800382",
+   "stream_source_id": "673f60bf-eca1-4fa8-89ad-34a6fe319a4e",
+   "columns": [
+    {
+     "id": "shed-outp-station-0a5f15",
+     "name": "station",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "shed-outp-cycle-5e7e76",
+     "name": "cycle",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "shed-outp-dsp-a9839a",
+     "name": "dsp",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "shed-outp-service_t-670782",
+     "name": "service_t",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "shed-outp-route_len-368e7d",
+     "name": "route_len",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "shed-outp-ofd_date-7f144f",
+     "name": "ofd_date",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "shed-outp-routes-6243e8",
+     "name": "routes",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "shed-outp-max_route-8b435a",
+     "name": "max_route",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "shed-outp-spr-3ab43f",
+     "name": "spr",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "shed-outp-volume-ea8ce2",
+     "name": "volume",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "shed-outp-actual_ds-6a210f",
+     "name": "actual_ds",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "shed-outp-unconstra-2306b9",
+     "name": "unconstra",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "7a992b9e-9eba-4f16-b5d8-17fc3fe31071",
+     "name": "7a992b9e-9eba-4f16-b5d8-17fc3fe31071",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "shed-outp-uploadtyp-1b7293",
+     "name": "uploadtyp",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "shed-outp-actual_ds-8cbf73",
+     "name": "actual_ds_8cbf73",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "shed-outp-planned_d-c91d06",
+     "name": "planned_d",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "df1dfa2e-3edb-4ffb-8188-2ed870fe3c23",
+     "name": "df1dfa2e-3edb-4ffb-8188-2ed870fe3c23",
+     "axis": "GROUP_BY",
+     "agg": null
+    }
+   ]
+  },
+  {
+   "key": "sd_allocation",
+   "title": "SD-Allocation",
+   "type": "TABLE",
+   "sheet_id": "5b821e9f-d9df-463b-92d0-1151c068704c_9f8ade4c-e3c5-4463-92a4-11a903d566c3",
+   "visual_id": "5b821e9f-d9df-463b-92d0-1151c068704c_df4d6665-c17a-4ee2-95f2-ce484a6f2de0",
+   "stream_source_id": "4987d68e-157f-440c-bcbf-93373554d69b",
+   "columns": [
+    {
+     "id": "shed-outp-servicear-5b479f",
+     "name": "servicear",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "shed-outp-servicety-e577ed",
+     "name": "servicety",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "shed-outp-year-40024e",
+     "name": "year",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "shed-outp-month-603358",
+     "name": "month",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "shed-outp-day-e27ca1",
+     "name": "day",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "shed-outp-hoursdura-8334f1",
+     "name": "hoursdura",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "shed-outp-starttime-0beb1b",
+     "name": "starttime",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "shed-outp-requiredr-16cf1e",
+     "name": "requiredr",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "shed-outp-provideri-f0bf89",
+     "name": "provideri",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "shed-outp-companysh-a28d3b",
+     "name": "companysh",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "shed-outp-wavegroup-b4ef62",
+     "name": "wavegroup",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "shed-outp-routetype-2bf34a",
+     "name": "routetype",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "shed-outp-initialst-d44224",
+     "name": "initialst",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "shed-outp-startloca-398c74",
+     "name": "startloca",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "shed-outp-startloca-f0baaf",
+     "name": "startloca_f0baaf",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "shed-outp-startloca-80e284",
+     "name": "startloca_80e284",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "shed-outp-region-ef27ea",
+     "name": "region",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "038ba742-6b00-47d5-bb4b-69078f42d13a",
+     "name": "038ba742-6b00-47d5-bb4b-69078f42d13a",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "shed-outp-uploadtyp-f3d3ab",
+     "name": "uploadtyp",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "9eb0607e-78a8-4df6-8205-fcafad26a59e",
+     "name": "9eb0607e-78a8-4df6-8205-fcafad26a59e",
+     "axis": "GROUP_BY",
+     "agg": null
+    }
+   ]
+  },
+  {
+   "key": "nd_rate_card",
+   "title": "ND-Rate card",
+   "type": "TABLE",
+   "sheet_id": "5b821e9f-d9df-463b-92d0-1151c068704c_9f8ade4c-e3c5-4463-92a4-11a903d566c3",
+   "visual_id": "5b821e9f-d9df-463b-92d0-1151c068704c_62b30292-60bc-4a30-be41-7719de2c0e7f",
+   "stream_source_id": "4749374e-4c44-42f9-b380-f2fff33bdcc5",
+   "columns": [
+    {
+     "id": "shed-outp-ofd_date-d1ac28",
+     "name": "ofd_date",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "shed-outp-region-70583a",
+     "name": "region",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "shed-outp-service_a-f087f4",
+     "name": "service_a",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "shed-outp-dsp-105dd9",
+     "name": "dsp",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "shed-outp-provider-76f565",
+     "name": "provider",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "shed-outp-wave-0c9e18",
+     "name": "wave",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "shed-outp-service_t-a9a020",
+     "name": "service_t",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "shed-outp-rl-1bd3f8",
+     "name": "rl",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "shed-outp-start_tim-c6e4f3",
+     "name": "start_tim",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "shed-outp-error-5f2c6d",
+     "name": "error",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "shed-outp-station-97ceaa",
+     "name": "station",
+     "axis": "GROUP_BY",
+     "agg": null
+    }
+   ]
+  },
+  {
+   "key": "amxl_scheduling_plan",
+   "title": "AMXL-Scheduling Plan",
+   "type": "TABLE",
+   "sheet_id": "5b821e9f-d9df-463b-92d0-1151c068704c_9f8ade4c-e3c5-4463-92a4-11a903d566c3",
+   "visual_id": "5b821e9f-d9df-463b-92d0-1151c068704c_2b161b68-c1e3-4fd0-8ad8-1ac5156b5906",
+   "stream_source_id": "51ac590e-f0e0-464a-86d2-445191cda6f8",
+   "columns": [
+    {
+     "id": "shed-outp-station-b27783",
+     "name": "station",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "shed-outp-ofd_date-1b2287",
+     "name": "ofd_date",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "shed-outp-country-a53e9f",
+     "name": "country",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "shed-outp-route_typ-1e3019",
+     "name": "route_typ",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "shed-outp-dsp-08a9cb",
+     "name": "dsp",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "shed-outp-service_t-efcd3d",
+     "name": "service_t",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "shed-outp-max_route-9b94ab",
+     "name": "max_route",
+     "axis": "VALUE",
+     "agg": "SUM"
+    },
+    {
+     "id": "shed-outp-routes-e526ae",
+     "name": "routes",
+     "axis": "VALUE",
+     "agg": "SUM"
+    },
+    {
+     "id": "shed-outp-spr_blend-9aab13",
+     "name": "spr_blend",
+     "axis": "VALUE",
+     "agg": "SUM"
+    },
+    {
+     "id": "shed-outp-uploadtyp-b2172c",
+     "name": "uploadtyp",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "shed-outp-plantype-6dd341",
+     "name": "plantype",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "5554d1e0-b004-4944-b771-3ea343c4db44",
+     "name": "5554d1e0-b004-4944-b771-3ea343c4db44",
+     "axis": "GROUP_BY",
+     "agg": null
+    }
+   ]
+  },
+  {
+   "key": "amxl_scheduling_routes",
+   "title": "AMXL-Scheduling Routes Level",
+   "type": "TABLE",
+   "sheet_id": "5b821e9f-d9df-463b-92d0-1151c068704c_9f8ade4c-e3c5-4463-92a4-11a903d566c3",
+   "visual_id": "5b821e9f-d9df-463b-92d0-1151c068704c_31c8a961-3ce6-4dfd-a363-7d58a11a4028",
+   "stream_source_id": "de5941e5-4a2b-4069-816f-4ff09d38dc92",
+   "columns": [
+    {
+     "id": "shed-outp-station-915514",
+     "name": "station",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "shed-outp-ofd_date-4ee7c1",
+     "name": "ofd_date",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "shed-outp-country-2012f2",
+     "name": "country",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "shed-outp-route_typ-bbe810",
+     "name": "route_typ",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "shed-outp-routes-7b09aa",
+     "name": "routes",
+     "axis": "VALUE",
+     "agg": "SUM"
+    },
+    {
+     "id": "shed-outp-max_route-092c50",
+     "name": "max_route",
+     "axis": "VALUE",
+     "agg": "SUM"
+    },
+    {
+     "id": "shed-outp-1p_spr-a42d67",
+     "name": "1p_spr",
+     "axis": "VALUE",
+     "agg": "SUM"
+    },
+    {
+     "id": "shed-outp-2p_spr-5ddde0",
+     "name": "2p_spr",
+     "axis": "VALUE",
+     "agg": "SUM"
+    },
+    {
+     "id": "shed-outp-pds_spr-be9b12",
+     "name": "pds_spr",
+     "axis": "VALUE",
+     "agg": "SUM"
+    },
+    {
+     "id": "shed-outp-spr_blend-846f16",
+     "name": "spr_blend",
+     "axis": "VALUE",
+     "agg": "SUM"
+    },
+    {
+     "id": "shed-outp-route_cap-5293f1",
+     "name": "route_cap",
+     "axis": "VALUE",
+     "agg": "SUM"
+    },
+    {
+     "id": "shed-outp-headroom-68fedd",
+     "name": "headroom",
+     "axis": "VALUE",
+     "agg": "SUM"
+    },
+    {
+     "id": "shed-outp-capacity_-cad5b2",
+     "name": "capacity_",
+     "axis": "VALUE",
+     "agg": "SUM"
+    },
+    {
+     "id": "shed-outp-uploadtyp-60a287",
+     "name": "uploadtyp",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "shed-outp-plantype-0cd89c",
+     "name": "plantype",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "aa04ddc1-ad8c-4a5b-9dcf-a4ec1eef7ced",
+     "name": "aa04ddc1-ad8c-4a5b-9dcf-a4ec1eef7ced",
+     "axis": "GROUP_BY",
+     "agg": null
+    }
+   ]
+  },
+  {
+   "key": "amxl_allocation",
+   "title": "AMXL-Allocation",
+   "type": "TABLE",
+   "sheet_id": "5b821e9f-d9df-463b-92d0-1151c068704c_9f8ade4c-e3c5-4463-92a4-11a903d566c3",
+   "visual_id": "5b821e9f-d9df-463b-92d0-1151c068704c_47d927c9-fb0c-4d7d-8448-b7b754ae26c2",
+   "stream_source_id": "53c514e5-53e2-4395-a86a-e4327aa27d0b",
+   "columns": [
+    {
+     "id": "shed-outp-region-604707",
+     "name": "region",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "shed-outp-servicear-bf78d0",
+     "name": "servicear",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "shed-outp-servicety-1ea9b5",
+     "name": "servicety",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "shed-outp-year-1fbeaf",
+     "name": "year",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "shed-outp-month-ebdeee",
+     "name": "month",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "shed-outp-day-ec33ef",
+     "name": "day",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "shed-outp-hoursdura-943117",
+     "name": "hoursdura",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "shed-outp-starttime-86e592",
+     "name": "starttime",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "shed-outp-requiredr-3df561",
+     "name": "requiredr",
+     "axis": "VALUE",
+     "agg": "SUM"
+    },
+    {
+     "id": "shed-outp-provideri-7d45f2",
+     "name": "provideri",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "shed-outp-companysh-d1adaf",
+     "name": "companysh",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "shed-outp-wavegroup-82f883",
+     "name": "wavegroup",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "shed-outp-startloca-16d586",
+     "name": "startloca",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "shed-outp-startloca-6178aa",
+     "name": "startloca_6178aa",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "shed-outp-startloca-d06388",
+     "name": "startloca_d06388",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "shed-outp-uploadtyp-58035a",
+     "name": "uploadtyp",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "shed-outp-plantype-b29672",
+     "name": "plantype",
+     "axis": "GROUP_BY",
+     "agg": null
+    },
+    {
+     "id": "8b55b8a6-69c3-4923-b3f5-c170b43a69c6",
+     "name": "8b55b8a6-69c3-4923-b3f5-c170b43a69c6",
+     "axis": "GROUP_BY",
+     "agg": null
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,28 @@
+/* Webfonts empaquetadas para los presets del selector de estilo de letra
+   (shared/fontStyle.js + [data-font] en toolbox-theme.css).
+
+   Vienen de Fontsource (espejo npm de Google Fonts) con versión EXACTA en
+   package.json: la descarga del "repositorio de fuentes" ocurre en BUILD
+   (npm install), nunca en runtime — los .woff2 viajan dentro del exe y la
+   Toolbox sigue funcionando 100% offline en las estaciones.
+
+   Subsets: latin + latin-ext (el francés usa œ, U+0153, que vive en
+   latin-ext). Pesos: 400/600/700/800 — los que usa la UI (500 y 900 caen
+   al vecino por el matching de CSS). Peso nuevo o subset nuevo = añadir
+   la línea aquí, no importar el index.css completo (arrastraría todos
+   los subsets cirílico/griego/vietnamita al exe).
+
+   Trimmed for Toolbox Studio (design.md §5.5): only @fontsource/inter is
+   a dependency here (the base UI font the theme CSS references by
+   default) — the other five ToolBox ships (nunito, poppins, quicksand,
+   jetbrains-mono, lora) are per-tool decorative font-style choices, not
+   installed in Studio's package.json, and dropped here to match. */
+
+@import "@fontsource/inter/latin-400.css";
+@import "@fontsource/inter/latin-600.css";
+@import "@fontsource/inter/latin-700.css";
+@import "@fontsource/inter/latin-800.css";
+@import "@fontsource/inter/latin-ext-400.css";
+@import "@fontsource/inter/latin-ext-600.css";
+@import "@fontsource/inter/latin-ext-700.css";
+@import "@fontsource/inter/latin-ext-800.css";
