@@ -27,6 +27,9 @@ backend/data/*
 *.tmp
 .pytest_cache/
 
+# Agent artifacts
+.agents/
+
 # IDE/OS
 .vscode/
 .idea/
