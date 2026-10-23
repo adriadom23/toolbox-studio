@@ -19,8 +19,8 @@ backend/config/studio.config.json
 # Runtime data (project submissions, caches)
 backend/data/*
 !backend/data/.gitkeep
-submissions/
-backend/submissions/
+/submissions/
+/backend/submissions/
 
 # Logs/temp
 *.log

@@ -17,11 +17,8 @@
         <button type="button" class="tb-button tb-button--ghost" @click="showCatalog = true">
           {{ t("studio.editor.componentLibrary") }}
         </button>
-        <button type="button" class="tb-button tb-button--ghost" @click="openDevServer">
+        <button type="button" class="tb-button tb-button--ghost" @click="openPreview">
           🔗 {{ t("studio.editor.openDevServer") }}
-        </button>
-        <button type="button" class="tb-button tb-button--primary" :disabled="submitting" @click="openSubmit">
-          📤 {{ t("studio.editor.submit") }}
         </button>
         <button type="button" class="tb-button tb-button--primary" :disabled="saving" @click="save">
           {{ saving ? t("studio.editor.saving") : t("studio.editor.save") }}
@@ -41,10 +38,10 @@
             v-for="file in files"
             :key="file.path"
             class="project-editor__file"
-            :class="{ 'is-active': file.path === activePath, 'is-dirty': file.dirty }"
+            :class="{ 'is-active': file.path === activePath, 'is-dirty': file.dirty, 'is-opaque': file.type === 'opaque' }"
           >
             <button type="button" @click="selectFile(file.path)">
-              {{ file.path }}<span v-if="file.dirty" aria-hidden="true"> ●</span>
+              {{ file.path }}<span v-if="file.type === 'opaque'" class="project-editor__opaque-badge">{{ t("studio.editor.opaqueBadge") }}</span><span v-if="file.dirty" aria-hidden="true"> ●</span>
             </button>
           </li>
         </ul>
@@ -53,42 +50,50 @@
       <section class="project-editor__pane">
         <p v-if="!activeFile" class="project-editor__placeholder">{{ t("studio.editor.noFile") }}</p>
         <template v-else>
-          <p v-if="editorFallback" class="project-editor__fallback-note">
-            {{ t("studio.editor.editorFallback") }}
-          </p>
-          <!-- CodeMirror mounts here when available. -->
-          <div v-show="!editorFallback" ref="cmHost" class="project-editor__cm"></div>
-          <!-- Plain-textarea fallback, feature-detected (design.md §5.3). -->
-          <textarea
-            v-if="editorFallback"
-            v-model="fallbackText"
-            class="project-editor__textarea"
-            spellcheck="false"
-            @input="onFallbackInput"
-          ></textarea>
+          <div v-if="activeFile.type === 'opaque'" class="project-editor__opaque" role="note">
+            <strong>{{ t("studio.editor.opaqueTitle") }}</strong>
+            <p>{{ t("studio.editor.opaqueDescription") }}</p>
+            <dl>
+              <div><dt>{{ t("studio.editor.opaqueType") }}</dt><dd>{{ activeFile.mediaType || "application/octet-stream" }}</dd></div>
+              <div><dt>{{ t("studio.editor.opaqueSize") }}</dt><dd>{{ activeFile.size }} B</dd></div>
+              <div><dt>SHA-256</dt><dd><code>{{ activeFile.sha256 }}</code></dd></div>
+            </dl>
+          </div>
+          <template v-else>
+            <p v-if="editorFallback" class="project-editor__fallback-note">
+              {{ t("studio.editor.editorFallback") }}
+            </p>
+            <!-- CodeMirror mounts here when available. -->
+            <div v-show="!editorFallback" ref="cmHost" class="project-editor__cm"></div>
+            <!-- Plain-textarea fallback, feature-detected (design.md §5.3). -->
+            <textarea
+              v-if="editorFallback"
+              v-model="fallbackText"
+              class="project-editor__textarea"
+              spellcheck="false"
+              @input="onFallbackInput"
+            ></textarea>
+          </template>
         </template>
       </section>
     </div>
-
-    <SubmitProjectDialog v-model="showSubmit" :name="name" />
   </div>
 </template>
 
 <script setup>
-import { computed, nextTick, onBeforeUnmount, ref } from "vue";
+import { computed, nextTick, onBeforeUnmount, ref, watch } from "vue";
 
 import { useI18n } from "../shared/i18n";
 import { showToolboxError } from "../shared/notifications/swal";
 import { openProject, saveProjectFiles } from "./api/studioHttp";
 import ComponentCatalog from "./ComponentCatalog.vue";
-import SubmitProjectDialog from "./SubmitProjectDialog.vue";
 
 const { t } = useI18n();
 
 const props = defineProps({
   name: { type: String, required: true },
 });
-const emit = defineEmits(["back"]);
+const emit = defineEmits(["back", "dirty-change", "preview"]);
 
 // Each file: { path, content (last-saved), draft (current buffer), dirty }.
 const files = ref([]);
@@ -96,10 +101,8 @@ const activePath = ref("");
 const loadError = ref("");
 const saveError = ref("");
 const saving = ref(false);
-const submitting = ref(false);
 const savedFlash = ref(false);
 const showCatalog = ref(false);
-const showSubmit = ref(false);
 
 const cmHost = ref(null);
 const editorFallback = ref(false);
@@ -122,8 +125,12 @@ async function load() {
     const list = Array.isArray(data.files) ? data.files : [];
     files.value = list.map((f) => ({
       path: f.path,
-      content: f.content ?? "",
-      draft: f.content ?? "",
+      type: f.type || "editable",
+      mediaType: f.media_type || "",
+      size: Number(f.size) || 0,
+      content: f.type === "opaque" ? null : (f.content ?? ""),
+      draft: f.type === "opaque" ? null : (f.content ?? ""),
+      sha256: f.sha256 ?? null,
       dirty: false,
     }));
     // Prefer opening the .vue file first (the developer's main surface).
@@ -166,6 +173,10 @@ async function selectFile(path) {
   activePath.value = path;
   const file = currentFile();
   if (!file) return;
+  if (file.type === "opaque") {
+    destroyEditor();
+    return;
+  }
 
   await ensureEditorModule();
   if (editorFallback.value) {
@@ -190,7 +201,7 @@ async function selectFile(path) {
 
 function syncActiveBuffer() {
   const file = currentFile();
-  if (!file) return;
+  if (!file || file.type === "opaque") return;
   if (editorFallback.value) {
     file.draft = fallbackText.value;
   } else if (editorInstance) {
@@ -206,19 +217,28 @@ function onFallbackInput() {
   file.dirty = file.draft !== file.content;
 }
 
+async function sha256Text(value) {
+  const bytes = new TextEncoder().encode(value);
+  const digest = await globalThis.crypto.subtle.digest("SHA-256", bytes);
+  return Array.from(new Uint8Array(digest), (byte) => byte.toString(16).padStart(2, "0")).join("");
+}
+
 async function save() {
   syncActiveBuffer();
   if (saving.value) return;
   saving.value = true;
   saveError.value = "";
   try {
-    // Send EVERY file's current content (design.md §5.3: not just the dirty
-    // one — project file sets are tiny), then mark them all clean.
-    const payload = files.value.map((f) => ({ path: f.path, content: f.draft }));
-    await saveProjectFiles(props.name, payload);
-    for (const f of files.value) {
-      f.content = f.draft;
-      f.dirty = false;
+    const dirtyFiles = files.value.filter((f) => f.type === "editable" && f.dirty);
+    for (let start = 0; start < dirtyFiles.length; start += 100) {
+      const batch = dirtyFiles.slice(start, start + 100);
+      const payload = batch.map((f) => ({ path: f.path, content: f.draft, base_sha256: f.sha256 }));
+      await saveProjectFiles(props.name, payload);
+      await Promise.all(batch.map(async (file) => {
+        file.content = file.draft;
+        file.sha256 = await sha256Text(file.draft);
+        file.dirty = false;
+      }));
     }
     savedFlash.value = true;
     clearTimeout(flashTimer);
@@ -231,21 +251,11 @@ async function save() {
   }
 }
 
-function openDevServer() {
-  // Design §5.4: opens the Vite dev-server preview route in a new tab. The
-  // preview is served on the frontend dev-server origin (5173 by default);
-  // using window.location.origin keeps it correct if the port differs.
-  const origin =
-    typeof window !== "undefined" ? window.location.origin : "http://127.0.0.1:5173";
-  window.open(`${origin}/projects/${encodeURIComponent(props.name)}/preview`, "_blank", "noopener");
+function openPreview() {
+  emit("preview");
 }
 
-function openSubmit() {
-  // Make sure disk reflects the editor before packaging so the submitted
-  // zip includes the latest edits — but never auto-notify (save ≠ submit).
-  syncActiveBuffer();
-  showSubmit.value = true;
-}
+watch(dirty, (value) => emit("dirty-change", value), { immediate: true });
 
 onBeforeUnmount(() => {
   clearTimeout(flashTimer);
@@ -368,6 +378,28 @@ load();
 .project-editor__file.is-dirty button {
   color: var(--toolbox-warning, #b8860b);
 }
+
+.project-editor__opaque-badge {
+  margin-left: 6px;
+  color: var(--toolbox-muted);
+  font-family: var(--toolbox-font, sans-serif);
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.project-editor__opaque {
+  margin: auto;
+  max-width: 680px;
+  padding: 24px;
+  color: var(--toolbox-text);
+}
+
+.project-editor__opaque p { color: var(--toolbox-muted); }
+.project-editor__opaque dl { display: grid; gap: 8px; }
+.project-editor__opaque dl div { display: grid; gap: 2px; }
+.project-editor__opaque dt { color: var(--toolbox-muted); font-size: 11px; font-weight: 700; text-transform: uppercase; }
+.project-editor__opaque dd { margin: 0; overflow-wrap: anywhere; }
 
 .project-editor__pane {
   min-height: 0;

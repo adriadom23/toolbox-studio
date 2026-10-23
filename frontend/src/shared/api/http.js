@@ -29,11 +29,18 @@ const API_ORIGIN = API_BASE_URL.startsWith("http")
   ? API_BASE_URL.replace(/\/api\/?$/, "")
   : (typeof window !== "undefined" ? window.location.origin : "");
 
-function buildApiUrl(path) {
+export function apiUrl(path) {
   if (!path) return "";
   if (/^https?:\/\//i.test(path)) return path;
   if (path.startsWith("/api/")) return `${API_ORIGIN}${path}`;
   return `${API_BASE_URL}${path.startsWith("/") ? path : `/${path}`}`;
+}
+
+function readCookie(name) {
+  if (typeof document === "undefined") return "";
+  const prefix = `${encodeURIComponent(name)}=`;
+  const item = document.cookie.split(";").map((part) => part.trim()).find((part) => part.startsWith(prefix));
+  return item ? decodeURIComponent(item.slice(prefix.length)) : "";
 }
 
 // Inject ``locale`` into JSON POST bodies so a Studio backend route can
@@ -78,18 +85,17 @@ export async function request(path, options = {}) {
 }
 
 async function requestInner(path, options = {}) {
-  // Detach option keys that are NOT valid ``fetch`` init options so they
-  // are not forwarded to the platform fetch (which would warn).
-  const { okStatuses, timeoutMs, retryNetwork = true, ...fetchOptions } = options || {};
-  const finalOptions = injectLocaleIntoBody(fetchOptions);
+  const { okStatuses, timeoutMs, retryNetwork, includeLocale = true, ...fetchOptions } = options || {};
+  const finalOptions = includeLocale ? injectLocaleIntoBody(fetchOptions) : fetchOptions;
+  const method = String(finalOptions.method ?? "GET").toUpperCase();
   const allowedStatuses = Array.isArray(okStatuses) ? okStatuses : null;
-  const maxAttempts = retryNetwork ? 2 : 1;
-
-  // When the body is ``FormData`` (file uploads) the browser MUST set
-  // ``Content-Type: multipart/form-data; boundary=...`` itself. Forcing
-  // ``application/json`` here breaks Flask's multipart parsing.
+  const shouldRetry = retryNetwork ?? (method === "GET" || method === "HEAD");
+  const maxAttempts = shouldRetry ? 2 : 1;
   const isFormDataBody =
     typeof FormData !== "undefined" && finalOptions.body instanceof FormData;
+  const csrfToken = ["POST", "PUT", "PATCH", "DELETE"].includes(method)
+    ? readCookie("studio_csrf")
+    : "";
 
   let lastError = null;
   for (let attempt = 0; attempt < maxAttempts; attempt += 1) {
@@ -97,12 +103,14 @@ async function requestInner(path, options = {}) {
       Number.isFinite(timeoutMs) && timeoutMs > 0 ? new AbortController() : null;
     const abortTimer = controller ? setTimeout(() => controller.abort(), timeoutMs) : null;
     try {
-      const response = await fetch(`${API_BASE_URL}${path}`, {
+      const response = await fetch(apiUrl(path), {
+        credentials: "same-origin",
+        ...finalOptions,
         headers: {
           ...(isFormDataBody ? {} : { "Content-Type": "application/json" }),
+          ...(csrfToken ? { "X-CSRF-Token": csrfToken } : {}),
           ...(finalOptions.headers ?? {}),
         },
-        ...finalOptions,
         ...(controller ? { signal: controller.signal } : {}),
       });
 
@@ -110,22 +118,14 @@ async function requestInner(path, options = {}) {
       const statusOk =
         response.ok || (allowedStatuses && allowedStatuses.includes(response.status));
       if (!statusOk) {
-        const err = new Error(payload.message || `API error ${response.status}`);
+        const err = new Error(payload.message || payload.error || `API error ${response.status}`);
         if (payload.reason) err.reason = payload.reason;
         if (payload.action) err.action = payload.action;
-        if (payload.message) err.message = payload.message;
         err.payload = payload;
         err.status = response.status;
-        // A 5xx with an empty body is the proxy reporting that the backend
-        // connection dropped mid-request (reload/reset) — not a real API
-        // response. Flag it so the retry logic below treats it like a
-        // network-level failure instead of a final answer.
-        err.transient = response.status >= 500 && !payload.message;
+        err.transient = response.status >= 500 && !payload.message && !payload.error;
         throw err;
       }
-      // A logical failure flagged inside a 2xx (or an explicitly allowed
-      // status) payload is still returned as-is — the caller decides what
-      // to do with it (e.g. a status that okStatuses allows through).
       void payloadFlagsFailure(payload);
       return payload;
     } catch (error) {
@@ -133,17 +133,11 @@ async function requestInner(path, options = {}) {
       const isNetworkFailure =
         error instanceof TypeError || error.transient === true || isTimeout;
       if (!isNetworkFailure || attempt >= maxAttempts - 1) {
-        if (isTimeout) {
-          throw new Error(i18nText("components.http.timeout"));
-        }
-        if (isNetworkFailure) {
-          throw new Error(i18nText("components.http.networkError"));
-        }
+        if (isTimeout) throw new Error(i18nText("components.http.timeout"));
+        if (isNetworkFailure) throw new Error(i18nText("components.http.networkError"));
         throw error;
       }
       lastError = error;
-      // Brief back-off so the bundle has time to finish the previous
-      // I/O before the retry hits.
       await new Promise((resolve) => setTimeout(resolve, 1500));
     } finally {
       if (abortTimer) clearTimeout(abortTimer);
@@ -169,9 +163,13 @@ export function getHealth() {
 // ``{ok:false, opened:false}`` so the caller can fall back).
 export async function openInFirefox(url) {
   try {
-    const response = await fetch(buildApiUrl("/api/browser/open-firefox"), {
+    const response = await fetch(apiUrl("/api/browser/open-firefox"), {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      credentials: "same-origin",
+      headers: {
+        "Content-Type": "application/json",
+        ...(readCookie("studio_csrf") ? { "X-CSRF-Token": readCookie("studio_csrf") } : {}),
+      },
       body: JSON.stringify({ url }),
     });
     return await response.json().catch(() => ({ ok: false, opened: false }));
@@ -217,6 +215,8 @@ export async function manifestUpload({ file, stationCode, cycle, date } = {}) {
   if (date) formData.append("date", date);
   const response = await fetch(`${API_BASE_URL}/manifest/upload`, {
     method: "POST",
+    credentials: "same-origin",
+    headers: readCookie("studio_csrf") ? { "X-CSRF-Token": readCookie("studio_csrf") } : {},
     body: formData,
   });
   const result = await response.json().catch(() => ({}));

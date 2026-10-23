@@ -1,0 +1,2 @@
+# Optional AWS profile only; the local profile never requires boto3.
+-r requirements-aws.lock

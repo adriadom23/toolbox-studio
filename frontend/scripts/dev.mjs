@@ -4,18 +4,14 @@ import net from "node:net";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-// Thin dev-server launcher, mirroring ToolBox's own
-// frontend/scripts/dev.mjs: boots the Flask backend (if not already
-// running and healthy), then starts Vite on a fixed port with the API
-// proxy wired to the backend. See ToolboxStudio/frontend/vite.config.js
-// for the proxy target.
-
 const HOST = "127.0.0.1";
-const BACKEND_PORT = 5000;
+const API_PORT = 5000;
+const PREVIEW_PORT = 5001;
 const VITE_PORT = 5173;
-const BACKEND_URL = `http://${HOST}:${BACKEND_PORT}`;
+const API_URL = `http://${HOST}:${API_PORT}`;
+const PREVIEW_URL = `http://${HOST}:${PREVIEW_PORT}`;
+const VITE_URL = `http://${HOST}:${VITE_PORT}`;
 const STARTUP_TIMEOUT_MS = 90_000;
-const REQUEST_TIMEOUT_MS = 2_500;
 const POLL_INTERVAL_MS = 500;
 
 const scriptDir = path.dirname(fileURLToPath(import.meta.url));
@@ -25,10 +21,8 @@ const backendDir = path.join(rootDir, "backend");
 const pythonPath = path.join(rootDir, ".venv", "Scripts", "python.exe");
 const vitePath = path.join(frontendDir, "node_modules", "vite", "bin", "vite.js");
 
-let backendChild = null;
-let viteChild = null;
+const owned = [];
 let shuttingDown = false;
-let backendExit = null;
 
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -57,48 +51,58 @@ function isPortOpen(port) {
   });
 }
 
-async function getJson(route) {
+async function responds(url, validate = () => true) {
   const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+  const timer = setTimeout(() => controller.abort(), 2_500);
   try {
-    const response = await fetch(`${BACKEND_URL}${route}`, {
-      headers: { accept: "application/json" },
-      signal: controller.signal,
-    });
-    if (!response.ok) return null;
-    return await response.json();
+    const response = await fetch(url, { signal: controller.signal });
+    if (!response.ok) return false;
+    return validate(response);
   } catch {
-    return null;
+    return false;
   } finally {
     clearTimeout(timer);
   }
 }
 
-async function backendIsHealthy() {
-  const health = await getJson("/api/health");
-  return health?.status === "ok";
+function spawnOwned(label, argv, options) {
+  const child = spawn(argv[0], argv.slice(1), options);
+  const service = { label, child, exit: null };
+  owned.push(service);
+  child.once("error", (error) => {
+    service.exit = { error };
+  });
+  child.once("exit", (code, signal) => {
+    service.exit = { code, signal };
+    if (!shuttingDown) void fail(`${label} se cerró inesperadamente (${signal || `código ${code}`}).`);
+  });
+  return service;
+}
+
+async function waitForService(service, url, validate = () => true) {
+  const deadline = Date.now() + STARTUP_TIMEOUT_MS;
+  while (Date.now() < deadline) {
+    if (service?.exit) {
+      if (service.exit.error) throw new Error(`no se pudo iniciar ${service.label}: ${service.exit.error.message}`);
+      throw new Error(`${service.label} terminó antes de estar listo.`);
+    }
+    if (await responds(url, validate)) return;
+    await sleep(POLL_INTERVAL_MS);
+  }
+  throw new Error(`${service?.label || url} no estuvo listo en 90 segundos.`);
 }
 
 function waitForExit(child, timeoutMs = 5_000) {
-  if (!child || child.exitCode !== null || child.signalCode !== null) {
-    return Promise.resolve();
-  }
-  return Promise.race([
-    new Promise((resolve) => child.once("exit", resolve)),
-    sleep(timeoutMs),
-  ]);
+  if (!child || child.exitCode !== null || child.signalCode !== null) return Promise.resolve();
+  return Promise.race([new Promise((resolve) => child.once("exit", resolve)), sleep(timeoutMs)]);
 }
 
 async function terminateOwnedTree(child) {
-  if (!child?.pid) return;
-
+  if (!child?.pid || child.exitCode !== null || child.signalCode !== null) return;
   if (process.platform === "win32") {
-    const killer = spawn("taskkill", ["/PID", String(child.pid), "/T", "/F"], {
-      stdio: "ignore",
-      windowsHide: true,
-    });
+    const killer = spawn("taskkill", ["/PID", String(child.pid), "/T", "/F"], { stdio: "ignore", windowsHide: true });
     await waitForExit(killer);
-  } else if (child.exitCode === null && child.signalCode === null) {
+  } else {
     child.kill("SIGTERM");
   }
   await waitForExit(child);
@@ -107,9 +111,7 @@ async function terminateOwnedTree(child) {
 async function shutdown(exitCode) {
   if (shuttingDown) return;
   shuttingDown = true;
-
-  await terminateOwnedTree(viteChild);
-  if (backendChild) await terminateOwnedTree(backendChild);
+  for (const service of [...owned].reverse()) await terminateOwnedTree(service.child);
   process.exit(exitCode);
 }
 
@@ -118,36 +120,17 @@ async function fail(message) {
   await shutdown(1);
 }
 
-function spawnBackend() {
-  backendChild = spawn(pythonPath, ["-m", "app.main"], {
-    cwd: backendDir,
-    env: process.env,
-    stdio: "inherit",
-  });
-  backendChild.once("error", (error) => {
-    backendExit = { error };
-  });
-  backendChild.once("exit", (code, signal) => {
-    backendExit = { code, signal };
-    if (viteChild && !shuttingDown) {
-      void fail(`el backend se cerró inesperadamente (${signal || `código ${code}`}).`);
-    }
-  });
-}
-
-async function waitForBackend() {
-  const deadline = Date.now() + STARTUP_TIMEOUT_MS;
-  while (Date.now() < deadline) {
-    if (backendExit) {
-      if (backendExit.error) {
-        throw new Error(`no se pudo iniciar Python: ${backendExit.error.message}`);
-      }
-      throw new Error(`el backend terminó antes de estar listo (${backendExit.signal || `código ${backendExit.code}`}).`);
-    }
-    if (await backendIsHealthy()) return;
-    await sleep(POLL_INTERVAL_MS);
+async function ensureExternalOrStart({ label, port, readyUrl, validate, argv, options }) {
+  if (await isPortOpen(port)) {
+    if (!(await responds(readyUrl, validate))) throw new Error(`el puerto ${port} está ocupado por un servicio que no es ${label}.`);
+    console.log(`[dev] ${label} reutilizado en ${readyUrl}`);
+    return null;
   }
-  throw new Error("el backend no respondió como saludable en 90 segundos. Revisa su salida anterior.");
+  console.log(`[dev] Iniciando ${label}...`);
+  const service = spawnOwned(label, argv, options);
+  await waitForService(service, readyUrl, validate);
+  console.log(`[dev] ${label} listo en ${readyUrl}`);
+  return service;
 }
 
 function viteEnvironment() {
@@ -156,59 +139,46 @@ function viteEnvironment() {
   return {
     ...process.env,
     NODE_OPTIONS: currentOptions ? `${currentOptions} ${warningOption}` : warningOption,
-    VITE_API_PROXY_TARGET: BACKEND_URL,
+    VITE_API_PROXY_TARGET: API_URL,
   };
-}
-
-function spawnVite() {
-  viteChild = spawn(process.execPath, [vitePath, "--host", HOST, "--port", String(VITE_PORT), "--strictPort"], {
-    cwd: frontendDir,
-    env: viteEnvironment(),
-    stdio: "inherit",
-  });
-  viteChild.once("error", (error) => {
-    void fail(`no se pudo iniciar Vite: ${error.message}`);
-  });
-  viteChild.once("exit", (code, signal) => {
-    if (!shuttingDown) {
-      const exitCode = code === 0 || signal === "SIGINT" ? 0 : 1;
-      void shutdown(exitCode);
-    }
-  });
 }
 
 async function main() {
   await requireFile(pythonPath, "El intérprete del entorno virtual");
-  await requireFile(path.join(backendDir, "app", "main.py"), "La entrada del backend");
+  await requireFile(path.join(backendDir, "app", "asgi.py"), "La entrada ASGI");
+  await requireFile(path.join(backendDir, "app", "preview_main.py"), "La entrada de preview");
   await requireFile(vitePath, "El binario local de Vite");
 
-  if (await isPortOpen(VITE_PORT)) {
-    throw new Error("el puerto 5173 está ocupado. Libera ese puerto y vuelve a intentarlo.");
-  }
+  await ensureExternalOrStart({
+    label: "API",
+    port: API_PORT,
+    readyUrl: `${API_URL}/api/ready`,
+    validate: async (response) => (await response.json()).status === "ready",
+    argv: [pythonPath, "-m", "uvicorn", "app.asgi:app", "--host", HOST, "--port", String(API_PORT), "--no-proxy-headers"],
+    options: { cwd: backendDir, env: process.env, stdio: "inherit" },
+  });
+  await ensureExternalOrStart({
+    label: "preview",
+    port: PREVIEW_PORT,
+    readyUrl: `${PREVIEW_URL}/bootstrap`,
+    argv: [pythonPath, "-m", "app.preview_main"],
+    options: { cwd: backendDir, env: process.env, stdio: "inherit" },
+  });
 
-  if (await isPortOpen(BACKEND_PORT)) {
-    if (!(await backendIsHealthy())) {
-      throw new Error("el puerto 5000 está ocupado por un servicio que no es un backend de Studio saludable. Libera ese puerto y vuelve a intentarlo.");
-    }
-    console.log("[dev] Backend saludable reutilizado en http://127.0.0.1:5000");
-  } else {
-    console.log("[dev] Iniciando backend...");
-    spawnBackend();
-    await waitForBackend();
-    console.log("[dev] Backend listo en http://127.0.0.1:5000");
-  }
-
-  console.log("[dev] Iniciando Vite...");
-  spawnVite();
+  if (await isPortOpen(VITE_PORT)) throw new Error(`el puerto ${VITE_PORT} está ocupado. Libéralo y vuelve a intentarlo.`);
+  const vite = spawnOwned("Vite", [process.execPath, vitePath, "--host", HOST, "--port", String(VITE_PORT), "--strictPort"], {
+    cwd: frontendDir,
+    env: viteEnvironment(),
+    stdio: "inherit",
+  });
+  await waitForService(vite, VITE_URL);
+  console.log(`[dev] Studio listo en ${VITE_URL} (API ${API_URL}, preview ${PREVIEW_URL})`);
 }
 
 process.once("SIGINT", () => void shutdown(130));
 process.once("SIGBREAK", () => void shutdown(130));
 process.once("SIGTERM", () => void shutdown(143));
 process.once("uncaughtException", (error) => void fail(error.message));
-process.once("unhandledRejection", (reason) => {
-  const message = reason instanceof Error ? reason.message : String(reason);
-  void fail(message);
-});
+process.once("unhandledRejection", (reason) => void fail(reason instanceof Error ? reason.message : String(reason)));
 
 main().catch((error) => void fail(error.message));

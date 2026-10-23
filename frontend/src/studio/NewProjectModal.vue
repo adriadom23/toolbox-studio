@@ -54,6 +54,12 @@ const creating = ref(false);
 const serverError = ref("");
 const touched = ref(false);
 const nameInput = ref(null);
+const idempotencyKey = ref("");
+
+function newKey() {
+  if (globalThis.crypto?.randomUUID) return globalThis.crypto.randomUUID();
+  return `project-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+}
 
 // Mirrors backend scaffold.slugify + SLUG_RE (^[a-z][a-z0-9-]*$) exactly
 // (design.md §6.2) so the inline preview/validation matches the server.
@@ -90,6 +96,7 @@ watch(
       creating.value = false;
       serverError.value = "";
       touched.value = false;
+      idempotencyKey.value = newKey();
       nextTick(() => nameInput.value?.focus());
     }
   },
@@ -113,7 +120,7 @@ async function submit() {
   creating.value = true;
   serverError.value = "";
   try {
-    const meta = await createProject(name.value.trim());
+    const meta = await createProject(name.value.trim(), idempotencyKey.value);
     emit("created", meta.name || slug.value);
   } catch (err) {
     if (err.status === 409) {

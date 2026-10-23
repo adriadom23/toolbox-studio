@@ -5,9 +5,18 @@
         <h1 class="project-list__title">{{ t("studio.list.title") }}</h1>
         <p class="project-list__subtitle">{{ t("studio.list.subtitle") }}</p>
       </div>
-      <button type="button" class="tb-button tb-button--primary" @click="showNewModal = true">
+      <button
+        type="button"
+        class="tb-button tb-button--primary"
+        :disabled="!canCreate"
+        :aria-describedby="canCreate ? undefined : 'project-create-hint'"
+        @click="showNewModal = true"
+      >
         <span aria-hidden="true">＋</span> {{ t("studio.list.newProject") }}
       </button>
+      <p v-if="!canCreate" id="project-create-hint" class="project-list__create-hint" role="note">
+        {{ t("studio.list.noCreateCapability") }}
+      </p>
     </header>
 
     <p v-if="loadError" class="project-list__error" role="alert">{{ loadError }}</p>
@@ -41,9 +50,6 @@
           <button type="button" class="tb-button tb-button--primary" @click="emit('open', project.name)">
             {{ t("studio.list.open") }}
           </button>
-          <button type="button" class="tb-button tb-button--ghost" @click="confirmDelete(project)">
-            {{ t("studio.list.delete") }}
-          </button>
         </div>
       </li>
     </ul>
@@ -56,11 +62,13 @@
 import { onMounted, ref } from "vue";
 
 import { useI18n } from "../shared/i18n";
-import { showToolboxError, showToolboxWarning } from "../shared/notifications/swal";
-import { listProjects, deleteProject } from "./api/studioHttp";
+import { listProjects } from "./api/studioHttp";
 import NewProjectModal from "./NewProjectModal.vue";
 
 const { t } = useI18n();
+defineProps({
+  canCreate: { type: Boolean, default: false },
+});
 const emit = defineEmits(["open"]);
 
 const projects = ref([]);
@@ -86,27 +94,6 @@ function formatStamp(iso) {
   const date = new Date(iso);
   if (Number.isNaN(date.getTime())) return String(iso);
   return date.toLocaleString();
-}
-
-// Explicit, fail-closed delete confirmation (UI half of the two-sided
-// delete-confirmation requirement; the backend requires {confirm:true} too).
-// Enter immediately after opening chooses Cancel (focusCancel in swal.js) so a
-// stray keypress never deletes a project.
-async function confirmDelete(project) {
-  const { isConfirmed } = await showToolboxWarning({
-    title: t("studio.list.deleteTitle", { name: project.name }),
-    text: t("studio.list.deleteText"),
-    showCancelButton: true,
-    confirmButtonText: t("studio.list.deleteConfirm"),
-    cancelButtonText: t("studio.list.deleteCancel"),
-  });
-  if (!isConfirmed) return;
-  try {
-    await deleteProject(project.name);
-    projects.value = projects.value.filter((p) => p.name !== project.name);
-  } catch (err) {
-    showToolboxError({ title: t("studio.list.delete"), text: t("studio.list.deleteError", { error: err.message }) });
-  }
 }
 
 function onCreated(name) {
@@ -143,6 +130,13 @@ onMounted(load);
   margin: 4px 0 0;
   color: var(--toolbox-muted);
   font-size: 14px;
+}
+
+.project-list__create-hint {
+  max-width: 280px;
+  margin: 0;
+  color: var(--toolbox-muted);
+  font-size: 12px;
 }
 
 .project-list__error {

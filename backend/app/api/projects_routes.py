@@ -113,23 +113,3 @@ def save_project_files(name: str):
 
     meta = registry.touch_modified(name)
     return jsonify(meta)
-
-
-@projects_bp.delete("/<name>")
-def delete_project(name: str):
-    if not registry.project_exists(name):
-        return jsonify({"error": "not_found"}), 404
-
-    body = request.get_json(silent=True) or {}
-    if body.get("confirm") is not True:
-        return jsonify({"error": "confirm_required"}), 400
-
-    import shutil
-
-    try:
-        shutil.rmtree(registry.frontend_project_dir(name))
-        shutil.rmtree(registry.backend_project_dir(name))
-    except OSError as exc:
-        return jsonify({"error": "filesystem_error", "detail": str(exc)}), 500
-
-    return jsonify({"status": "deleted", "name": name})

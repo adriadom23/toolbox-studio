@@ -25,6 +25,8 @@ import os
 from pathlib import Path
 from typing import Any
 
+from app.core.studio_config import DEFAULT_CONFIG_PATH
+
 # Default owner list — mirrors ``VERSION_ADMIN_LOGINS`` exactly, per FR-4 and
 # NFR-3. This is documentation of who gets notified, not an access-control
 # gate: Studio does not authenticate developers against it.
@@ -38,8 +40,8 @@ DEFAULT_CONFIG: dict[str, Any] = {
     },
 }
 
-CONFIG_DIR = Path(__file__).resolve().parents[2] / "config"
-CONFIG_PATH = CONFIG_DIR / "studio.config.json"
+CONFIG_DIR = DEFAULT_CONFIG_PATH.parent
+CONFIG_PATH = DEFAULT_CONFIG_PATH
 
 
 def _config_path() -> Path:

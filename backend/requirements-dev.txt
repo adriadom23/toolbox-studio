@@ -1,4 +1,2 @@
-# Toolbox Studio backend — development/test-only dependencies.
-# Not needed to run the app itself (see requirements.txt); install when
-# running the test suite.
-pytest
+# Development dependencies: includes the runtime lock and test/build tooling.
+-r requirements-dev.lock

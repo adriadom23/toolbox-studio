@@ -13,9 +13,17 @@ from __future__ import annotations
 import importlib
 import json
 import logging
+import os
+import secrets
+import stat
+from contextlib import contextmanager
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any
+from typing import Any, Iterator
+
+from app.projects.safe_fs import is_safe_directory, stable_directories
+from app.projects.validation import InvalidProjectNameError, validate_slug
+from app.submissions.snapshot import _open_regular_nofollow
 
 logger = logging.getLogger(__name__)
 
@@ -25,6 +33,7 @@ BACKEND_PROJECTS_DIR = BACKEND_DIR / "app" / "projects"
 FRONTEND_PROJECTS_DIR = BACKEND_DIR.parent / "frontend" / "src" / "projects"
 
 META_FILENAME = "project.meta.json"
+_MAX_META_BYTES = 64 * 1024
 
 # Names that are not projects even though they live under
 # ``app/projects/`` (Python package plumbing / this module's own siblings).
@@ -47,21 +56,43 @@ def meta_path(name: str) -> Path:
     return frontend_project_dir(name) / META_FILENAME
 
 
+@contextmanager
+def stable_project_roots(name: str) -> Iterator[None]:
+    slug = validate_slug(name)
+    with stable_directories(frontend_project_dir(slug), backend_project_dir(slug)):
+        yield
+
+
 def project_exists(name: str) -> bool:
-    return backend_project_dir(name).is_dir() and frontend_project_dir(name).is_dir()
+    try:
+        validate_slug(name)
+    except InvalidProjectNameError:
+        return False
+    return is_safe_directory(backend_project_dir(name)) and is_safe_directory(frontend_project_dir(name))
 
 
 def read_meta(name: str) -> dict[str, Any]:
-    """Return the project's ``project.meta.json`` contents, or a minimal
-    fallback shape when the file is missing/unreadable (never raises)."""
+    """Read bounded regular metadata without following links."""
 
     path = meta_path(name)
     try:
-        with path.open("r", encoding="utf-8") as handle:
-            data = json.load(handle)
+        info = path.lstat()
+        if (
+            not stat.S_ISREG(info.st_mode)
+            or info.st_size > _MAX_META_BYTES
+            or bool(getattr(info, "st_file_attributes", 0) & 0x400)
+        ):
+            raise OSError("project metadata is not a bounded regular file")
+        with _open_regular_nofollow(path) as (handle, opened):
+            if opened.st_size > _MAX_META_BYTES:
+                raise OSError("project metadata exceeds 64 KiB")
+            payload = handle.read(_MAX_META_BYTES + 1)
+        if len(payload) > _MAX_META_BYTES:
+            raise OSError("project metadata exceeds 64 KiB")
+        data = json.loads(payload.decode("utf-8"))
         if isinstance(data, dict):
             return data
-    except (OSError, ValueError):
+    except (OSError, ValueError, UnicodeDecodeError):
         pass
     return {
         "name": name,
@@ -73,11 +104,26 @@ def read_meta(name: str) -> dict[str, Any]:
 
 
 def write_meta(name: str, meta: dict[str, Any]) -> None:
+    """Atomically replace metadata without opening the destination link."""
+
     path = meta_path(name)
-    path.parent.mkdir(parents=True, exist_ok=True)
-    with path.open("w", encoding="utf-8") as handle:
-        json.dump(meta, handle, indent=2)
-        handle.write("\n")
+    parent = path.parent
+    parent_info = parent.lstat()
+    if (
+        not stat.S_ISDIR(parent_info.st_mode)
+        or stat.S_ISLNK(parent_info.st_mode)
+        or bool(getattr(parent_info, "st_file_attributes", 0) & 0x400)
+    ):
+        raise OSError("project metadata directory is unsafe")
+    payload = (json.dumps(meta, indent=2) + "\n").encode("utf-8")
+    if len(payload) > _MAX_META_BYTES:
+        raise ValueError("project metadata exceeds 64 KiB")
+    staging = parent / f".{META_FILENAME}.staging-{os.getpid()}-{secrets.token_hex(8)}"
+    with staging.open("xb") as handle:
+        handle.write(payload)
+        handle.flush()
+        os.fsync(handle.fileno())
+    os.replace(staging, path)
 
 
 def touch_modified(name: str) -> dict[str, Any]:
@@ -147,6 +193,8 @@ def register_all_project_blueprints(app) -> None:
         if not entry.is_dir() or entry.name in _RESERVED_NAMES or entry.name.startswith("_"):
             continue
         name = entry.name
+        if not project_exists(name):
+            continue
         routes_path = entry / "routes.py"
         if not routes_path.exists():
             continue

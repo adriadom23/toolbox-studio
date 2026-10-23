@@ -7,6 +7,7 @@
         role="dialog"
         aria-modal="true"
         :aria-labelledby="titleId"
+        :aria-describedby="ariaDescription ? descriptionId : undefined"
         @click.self="close"
         @keydown.esc.stop="closeTop"
       >
@@ -32,6 +33,9 @@
           </header>
 
           <div class="tb-modal__body">
+            <p v-if="ariaDescription" :id="descriptionId" class="tb-modal__sr-only">
+              {{ ariaDescription }}
+            </p>
             <slot />
           </div>
 
@@ -51,6 +55,7 @@ import { useI18n } from "../i18n";
 
 const { t } = useI18n();
 const titleId = `tb-modal-title-${useId()}`;
+const descriptionId = `tb-modal-description-${useId()}`;
 
 const props = defineProps({
   modelValue: {
@@ -62,6 +67,10 @@ const props = defineProps({
     required: true,
   },
   eyebrow: {
+    type: String,
+    default: "",
+  },
+  ariaDescription: {
     type: String,
     default: "",
   },
@@ -78,6 +87,7 @@ const sizeStyle = computed(() => ({
 }));
 const shell = ref(null);
 let previousActiveElement = null;
+let closingShell = null;
 let registeredOpen = false;
 let restoreAfterLeave = false;
 let leaving = false;
@@ -141,14 +151,33 @@ function unregisterOpenModal() {
   document.body.classList.toggle("tb-modal-open", next > 0);
 }
 
+function canRestoreFocus(element) {
+  if (!element?.isConnected || element.disabled || element.getAttribute?.('aria-disabled') === 'true') {
+    return false;
+  }
+  const style = window.getComputedStyle(element);
+  return style.display !== 'none' && style.visibility !== 'hidden' && element.getClientRects().length > 0;
+}
+
+function focusWasNotReclaimed() {
+  const active = document.activeElement;
+  return (
+    !active ||
+    active === document.body ||
+    active === document.documentElement ||
+    closingShell?.contains(active)
+  );
+}
+
 function onAfterLeave() {
   if (props.modelValue) return;
   leaving = false;
   window.removeEventListener("keydown", onKeydown, true);
   unregisterOpenModal();
 
+  const closingModal = closingShell?.closest('.tb-modal');
   const visibleModals = [...document.querySelectorAll('.tb-modal')].filter(
-    (modal) => modal.getClientRects().length > 0,
+    (modal) => modal !== closingModal && modal.getClientRects().length > 0,
   );
   const activeModal = visibleModals.at(-1) || null;
   const focusTargetBelongsToActiveModal =
@@ -156,11 +185,13 @@ function onAfterLeave() {
   if (
     restoreAfterLeave &&
     focusTargetBelongsToActiveModal &&
-    previousActiveElement?.isConnected
+    focusWasNotReclaimed() &&
+    canRestoreFocus(previousActiveElement)
   ) {
     previousActiveElement.focus({ preventScroll: true });
   }
   previousActiveElement = null;
+  closingShell = null;
   restoreAfterLeave = false;
   if (shell.value) {
     delete shell.value.__tbFocusReturn;
@@ -223,6 +254,7 @@ watch(
     if (typeof document === "undefined") return;
     if (open) {
       leaving = false;
+      closingShell = null;
       restoreAfterLeave = false;
       if (shell.value) shell.value.dataset.tbModalLeaving = "false";
       const shouldCaptureOpener = !registeredOpen;
@@ -245,6 +277,7 @@ watch(
       // leave transition is gone; the popup underneath must not regain
       // Escape/Tab while this shell is still visible.
       leaving = registeredOpen;
+      closingShell = shell.value;
       if (shell.value) shell.value.dataset.tbModalLeaving = String(leaving);
       restoreAfterLeave = isTopModal();
     }
@@ -256,7 +289,11 @@ onBeforeUnmount(() => {
   const shouldRestoreFocus = isTopModal();
   unregisterOpenModal();
   window.removeEventListener("keydown", onKeydown, true);
-  if (shouldRestoreFocus && previousActiveElement?.isConnected) {
+  if (
+    shouldRestoreFocus &&
+    focusWasNotReclaimed() &&
+    canRestoreFocus(previousActiveElement)
+  ) {
     previousActiveElement.focus({ preventScroll: true });
   }
   if (shell.value) {
@@ -345,6 +382,18 @@ onBeforeUnmount(() => {
 .tb-modal__body {
   padding: 20px 22px;
   overflow: auto;
+}
+
+.tb-modal__sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 .tb-modal__footer {
